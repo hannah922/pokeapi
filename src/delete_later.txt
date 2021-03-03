@@ -1,0 +1,1 @@
+revisit the types of data, for instance in pokedex pokeid parameter for pullpokecard
