@@ -75,7 +75,6 @@ interface poketype {
         held_item: {
             name: string,
             url: string,
-            sprite: string,
         },
         min_level: string,
     }>,
@@ -91,7 +90,6 @@ interface species {
     held_item: {
         name: string,
         url: string,
-        sprite: string,
     },
 }
 
@@ -152,7 +150,6 @@ const Pokemon: FunctionComponent<componentProps> = ({ match }) => {
                 held_item: {
                     name: "",
                     url: "",
-                    sprite: "",
                 },
                 trigger: "",
                 min_level: "",
@@ -238,38 +235,12 @@ const Pokemon: FunctionComponent<componentProps> = ({ match }) => {
                                     let isLastPokemonInChain = evolutionChain.evolves_to.length === 0;
                                     let number_of_nodes = 0;
                                     evolutionChain.evolves_to.forEach(function (arrayitem: typeof evolutionChain) {
-                                        if (arrayitem.evolution_details[0].held_item != null) {
-                                            axios.get(`${arrayitem.evolution_details[0].held_item.url}`).then(function(response) {
-                            
-                                                speciesArrayPart.push({
-                                                    name: arrayitem.species.name, url: arrayitem.species.url,
-                                                    min_level: arrayitem.evolution_details[0].min_level,
-                                                    trigger: arrayitem.evolution_details[0].trigger.name,
-                                                    held_item:
-                                                        {
-                                                            name: arrayitem.evolution_details[0].held_item.name,
-                                                            url: arrayitem.evolution_details[0].held_item.url,
-                                                            sprite: response.data.sprites.default,
-                                                        }
-                                                });
-                                          
-
-                                            });
-                                        } else {
-                                            speciesArrayPart.push({
-                                                name: arrayitem.species.name, url: arrayitem.species.url,
-                                                min_level: arrayitem.evolution_details[0].min_level,
+                                        // console.log(arrayitem);
+                                        speciesArrayPart.push({ name: arrayitem.species.name, url: arrayitem.species.url, 
+                                            min_level: arrayitem.evolution_details[0].min_level,
                                                 trigger: arrayitem.evolution_details[0].trigger.name,
-                                                held_item:
-                                                    {
-                                                        name: "Object_was_null",
-                                                        url: "",
-                                                        sprite: "",
-                                                    }
-                                            });
-                                        };
-                    
-                                      
+                                            held_item: (arrayitem.evolution_details[0].held_item == null) ? {name: "Object_was_null", url: ""} : 
+                                            { name: arrayitem.evolution_details[0].held_item.name, url: arrayitem.evolution_details[0].held_item.url}});
                                         number_of_nodes++;
                                     })
                                     if (!isLastPokemonInChain) {
