@@ -30,11 +30,25 @@ interface PokeCardDetailedProps {
         held_item: {
             name: string,
             url: string,
+            sprite: string,
         },
         min_level: string,
     }>,
     moves: [{ name: string }]
 }
+
+interface evolutionData {   
+        name: string,
+        url: string,
+        trigger: string,
+        held_item: {
+            name: string,
+            url: string,
+            sprite: string,
+        },
+        min_level: string,
+    
+};
 
 
 
@@ -88,6 +102,7 @@ const Styles = makeStyles({
     datagrid: {
         overflow: "hidden",
     },
+    
 });
 
 const toUpperCase = (name: string) => {
@@ -95,38 +110,32 @@ const toUpperCase = (name: string) => {
 
 };
 
-interface evolutionprops {
-    id: number,
-    name: string,
-    rest: {
-        level: string,
-        trigger: string,
-        item: string,
-    },
-}
 
 const PokeCardDetailed = ({ id, name, abilities, sprites, types, stats, evolutions, moves }: PokeCardDetailedProps) => {
     //console.log(id, name);
     const history = useHistory();
     const classes = Styles();
-
+    console.log("_____________LL",evolutions);
     const evolution_column: GridColDef[] = [
         { field: 'id', width: 20, hide: true},
         { field: 'name', width: 300, align: 'right',
         renderCell: (params) => (
             <div>
-                <Typography align={'right'} style={{fontSize: 25, whiteSpace: "pre"}}>              {params.value}:</Typography>
+                <Typography align={'right'} style={{fontSize: 25, whiteSpace: "pre", paddingLeft: "100px", fontWeight: 800}}>{params.value}:</Typography>
             </div>
         )
     },
-        { field: 'rest', width: 300, align: 'center', type: 'string',
-        renderCell: (params) =>  {
+        { field: 'rest', width: 300, align: 'left', type: 'string',
+        renderCell: (params) =>  { 
             var getValues = (params.value as string)!.split(",");
+            let displayProp = getValues[2] === "Object_was_null";
+            console.log(getValues[3])
+            console.log("huh?")
             return(
             <div>
-            <Typography style={{fontSize: 25}}>Level: {getValues[0]}</Typography>
-            <Typography style={{fontSize: 25}}>Condition: {getValues[1]}</Typography>
-            <Typography style={{fontSize: 25}} hidden={(getValues[2] == null) ? true : false}>{getValues[2]}</Typography>
+            <Typography style={{fontSize: 25, paddingLeft: "40px"}}>Level: {getValues[0]}</Typography>
+            <Typography style={{fontSize: 25, paddingLeft: "40px"}}>Condition: {getValues[1]}</Typography>
+            <Typography style={{fontSize: 25, paddingLeft: "0px", display: (displayProp) ? "none" : "flex", whiteSpace: "pre"}}>Item: {getValues[2]} <Avatar style={{width: "40px", height: "40px"}} src={getValues[3]}></Avatar></Typography> 
             </div>);
         },
           
@@ -135,6 +144,7 @@ const PokeCardDetailed = ({ id, name, abilities, sprites, types, stats, evolutio
 
     var evolution_row: GridRowsProp = [];
     var i = 0;
+    console.log()
 
     return (
         <>
@@ -212,11 +222,12 @@ const PokeCardDetailed = ({ id, name, abilities, sprites, types, stats, evolutio
                         </TableRow>
                         </Table>
 
-                                {evolutions.map((item: { name: string, trigger: string, held_item: {name: string, url: string}, min_level: string }) => {
+                                {evolutions.map((item: { name: string, trigger: string, held_item: {name: string, url: string, sprite: string}, min_level: string }) => {
+                                    console.log("look for this: itemsprite", item.held_item.sprite);
                                     evolution_row.push({
                                         id: i++,
                                         name: item.name,
-                                        rest: item.min_level + "," + item.trigger +"," +item.held_item,
+                                        rest: item.min_level + "," + item.trigger +"," +item.held_item.name + "," + item.held_item.sprite,
                                     });
                                     console.log({evolution_row});
 
@@ -227,7 +238,7 @@ const PokeCardDetailed = ({ id, name, abilities, sprites, types, stats, evolutio
                         rows={evolution_row} columns={evolution_column} autoHeight={true}
                         disableSelectionOnClick={true}
                         hideFooter={true} showCellRightBorder={false} showColumnRightBorder={false}
-                        headerHeight={0} disableExtendRowFullWidth={false} rowHeight={100}
+                        headerHeight={0} disableExtendRowFullWidth={false} rowHeight={150}
                         ></DataGrid>
   
 

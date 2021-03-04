@@ -33,13 +33,11 @@ const Styles = makeStyles({
 });
 
 const toUpperCase = (name: string) => {
-    console.log({ name })
     return name.charAt(0).toUpperCase() + name.slice(1);
 
 };
 
 const PokeCard = ({ id, name, sprite }: PokeCardProps) => {
-    console.log(id, name);
     const history = useHistory();
     const classes = Styles();
     return (

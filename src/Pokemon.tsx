@@ -72,7 +72,11 @@ interface poketype {
         name: string,
         url: string,
         trigger: string,
-        held_item: string,
+        held_item: {
+            name: string,
+            url: string,
+            sprite: string,
+        },
         min_level: string,
     }>,
     moves: [{ name: string }]
@@ -84,14 +88,21 @@ interface species {
     url: string,
     min_level: string,
     trigger: string,
-    held_item: string,
+    held_item: {
+        name: string,
+        url: string,
+        sprite: string,
+    },
 }
 
 interface evolutionChainType {
     evolution_details: Array<{
-        trigger: {name: string, url: string},
+        trigger: { name: string, url: string },
         min_level: string,
-        held_item: string,
+        held_item: {
+            name: string,
+            url: string,
+        }
     }>,
     evolves_to: Array<evolutionChainType>,
     is_baby: boolean,
@@ -100,12 +111,25 @@ interface evolutionChainType {
         url: string,
     }
 }
+//paramteres: URL & version: follows the link and returns a url from there (version used to control where data is located: 2 use cases)
+function getURL(url: string, version: number) {
+    var newURL;
+    axios.get(url).then(function (response) {
+        if (version == 0) {
+            newURL = response.data.evolution_chain.url;
+        }
+        else {
+            newURL = response.data.sprites.default;
+        }
+    })
+    return newURL;
+};
 
 //there has to be a joint query for evolutions
 
 const Pokemon: FunctionComponent<componentProps> = ({ match }) => {
     const [PokemonData, setPokemon] = useState(Object.values(MockData));
-    console.log({ match })
+
     //return <div> this is the pokemon page {match.params.pokemonId} </div>;
     const [newPokemonDataDetailed, setNewPokemonDataDetailed] = useState<poketype>();
 
@@ -125,7 +149,11 @@ const Pokemon: FunctionComponent<componentProps> = ({ match }) => {
             evolutions: [{
                 name: "",
                 url: "",
-                held_item: "",
+                held_item: {
+                    name: "",
+                    url: "",
+                    sprite: "",
+                },
                 trigger: "",
                 min_level: "",
             }],
@@ -193,7 +221,6 @@ const Pokemon: FunctionComponent<componentProps> = ({ match }) => {
                     evolution_id = data.evolution_chain.url;
 
 
-                    console.log({ evolution_id });
                     axios.get(`${evolution_id}`)
                         .then(function (response) {
                             const { data } = response;
@@ -211,11 +238,38 @@ const Pokemon: FunctionComponent<componentProps> = ({ match }) => {
                                     let isLastPokemonInChain = evolutionChain.evolves_to.length === 0;
                                     let number_of_nodes = 0;
                                     evolutionChain.evolves_to.forEach(function (arrayitem: typeof evolutionChain) {
-                                        console.log(arrayitem);
-                                        speciesArrayPart.push({ name: arrayitem.species.name, url: arrayitem.species.url, 
-                                            min_level: arrayitem.evolution_details[0].min_level,
+                                        if (arrayitem.evolution_details[0].held_item != null) {
+                                            axios.get(`${arrayitem.evolution_details[0].held_item.url}`).then(function(response) {
+                            
+                                                speciesArrayPart.push({
+                                                    name: arrayitem.species.name, url: arrayitem.species.url,
+                                                    min_level: arrayitem.evolution_details[0].min_level,
+                                                    trigger: arrayitem.evolution_details[0].trigger.name,
+                                                    held_item:
+                                                        {
+                                                            name: arrayitem.evolution_details[0].held_item.name,
+                                                            url: arrayitem.evolution_details[0].held_item.url,
+                                                            sprite: response.data.sprites.default,
+                                                        }
+                                                });
+                                          
+
+                                            });
+                                        } else {
+                                            speciesArrayPart.push({
+                                                name: arrayitem.species.name, url: arrayitem.species.url,
+                                                min_level: arrayitem.evolution_details[0].min_level,
                                                 trigger: arrayitem.evolution_details[0].trigger.name,
-                                            held_item: (arrayitem.evolution_details[0].held_item == null) ? "" : arrayitem.evolution_details[0].held_item[0]});
+                                                held_item:
+                                                    {
+                                                        name: "Object_was_null",
+                                                        url: "",
+                                                        sprite: "",
+                                                    }
+                                            });
+                                        };
+                    
+                                      
                                         number_of_nodes++;
                                     })
                                     if (!isLastPokemonInChain) {
@@ -235,7 +289,27 @@ const Pokemon: FunctionComponent<componentProps> = ({ match }) => {
                         });
 
 
-                });
+                }); /* function recursion(evolutionChain: evolutionChainType) {
+                    let isLastPokemonInChain = evolutionChain.evolves_to.length === 0;
+                    let number_of_nodes = 0;
+                    evolutionChain.evolves_to.forEach(function (arrayitem: typeof evolutionChain) {
+                        console.log(arrayitem);
+                        speciesArrayPart.push({ name: arrayitem.species.name, url: arrayitem.species.url, 
+                            min_level: arrayitem.evolution_details[0].min_level,
+                                trigger: arrayitem.evolution_details[0].trigger.name,
+                            held_item: (arrayitem.evolution_details[0].held_item == null) ? "" : arrayitem.evolution_details[0].held_item[0]});
+                        number_of_nodes++;
+                    })
+                    if (!isLastPokemonInChain) {
+                        for (let i = 0; i < number_of_nodes; i++) {
+                            const evolvesTo: evolutionChainType = evolutionChain.evolves_to[i];
+                            //console.log({evolvesTo});
+                            const result = recursion(evolvesTo);
+                        }
+
+                    }
+                    return speciesArrayPart;
+                }*/
 
 
 
@@ -249,20 +323,19 @@ const Pokemon: FunctionComponent<componentProps> = ({ match }) => {
 
     }, []);
 
-    console.log({ newPokemonDataDetailed });
 
 
     return (
         <>
             {newPokemonDataDetailed ? (
 
-                <Typography>
+                <div>
                     <PokeCardDetailed id={newPokemonDataDetailed.id} name={newPokemonDataDetailed.name}
                         abilities={newPokemonDataDetailed.abilities} stats={newPokemonDataDetailed.stats}
                         sprites={newPokemonDataDetailed.sprites} types={newPokemonDataDetailed.types}
                         evolutions={newPokemonDataDetailed.evolutions} moves={newPokemonDataDetailed.moves}
                     />
-                </Typography>
+                </div>
 
             ) : (
                     <CircularProgress></CircularProgress>

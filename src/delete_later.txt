@@ -1,1 +1,4 @@
-revisit the types of data, for instance in pokedex pokeid parameter for pullpokecard
+add abilities description
+display sprite next to held item
+add linking function to evolution
+revisit naming conventions
