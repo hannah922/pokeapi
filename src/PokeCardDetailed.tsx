@@ -88,6 +88,8 @@ const Styles = makeStyles({
     },
     datagrid: {
         overflow: "hidden",
+        borderBottom: "none",
+        borderTop: "none",
     },
 
 });
@@ -96,6 +98,8 @@ const toUpperCase = (name: string) => {
     return name.charAt(0).toUpperCase() + name.slice(1);
 
 };
+
+
 
 
 interface spriteInterface {

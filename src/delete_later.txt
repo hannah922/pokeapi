@@ -1,4 +1,5 @@
 add abilities description
-display sprite next to held item
 add linking function to evolution
 revisit naming conventions
+
+remove borders from datagrid
