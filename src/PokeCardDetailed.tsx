@@ -97,27 +97,18 @@ const toUpperCase = (name: string) => {
 
 };
 
-function mapName(name: string, ayyyylmao: Array<{ name: string, sprite: string }>) {
-    var sprite = "";
-    console.log("the name: ",name,"and the array:", ayyyylmao, "and its length: ", ayyyylmao.length);
-    for (let j = 0; j < ayyyylmao.length; j++) {
-        if (name == ayyyylmao[j].name) {
-            console.log("we doing something bois");
-            sprite = ayyyylmao[j].sprite;
-        }
-        else {
-            console.log("we aint doing nothing bois");
-        }
-    };
-    return sprite;
-};
-
 
 interface spriteInterface {
     evolutionName: string,
     itemName: string,
     itemSpriteUrl: string,
-}
+};
+
+interface pokemonAvatarInterface {
+    pokemonName: string,
+    pokemonID: string,
+    pokemonSprite: string,
+};
 
 const PokeCardDetailed = ({ id, name, abilities, sprites, types, stats, evolutions, moves }: PokeCardDetailedProps) => {
 
@@ -125,26 +116,10 @@ const PokeCardDetailed = ({ id, name, abilities, sprites, types, stats, evolutio
 
     // mapName('test name', [{name: 'pika', sprite: 'pika.jpg'}, {name: 'bulbasaur', sprite: 'bulbasaur.jpg'}]);
    const [evolutionItems, setEvolutionItems] = useState<Array<spriteInterface>>([]);
+   const [evolutionNameProperties, setEvolutionNameProperties] = useState<Array<pokemonAvatarInterface>>([]);
 
-    //console.log(id, name);
     const history = useHistory();
     const classes = Styles();
-
-
-    // let evolutionSprites: Array<spriteInterface> = [];
-    // console.log('evolution_sprite after declaration', evolutionSprites);
-/* 
-    evolution_sprite.push({ name: 'test name', sprite: 'test sprite'});
-    console.log('evolution_sprite array with one test element', evolution_sprite);
- */
-/*     evolutions.map((element: { name: string, trigger: string, held_item: { name: string, url: string }, min_level: string }) => {
-        axios.get(`${element.held_item.url}`).then(function (response) {
-            evolutionSprites.push({ name: element.name, sprite: response.data.sprites.default });
-        }).catch(error => {
-            evolutionSprites.push({ name: element.name, sprite: "nothing" });
-        });
-
-    }); */
 
     useEffect(() => {
         evolutions.forEach((evolution) => {
@@ -163,26 +138,46 @@ const PokeCardDetailed = ({ id, name, abilities, sprites, types, stats, evolutio
         })
     }, []);
 
+    useEffect(() => {
+        evolutions.forEach((evolution) => {
+            axios.get(`https://pokeapi.co/api/v2/pokemon/${evolution.name}`).then(response => {
+                setEvolutionNameProperties(previousEvolutionNames => {
+                    return [...previousEvolutionNames,
+                    {
+                        pokemonName: evolution.name,
+                        pokemonID: response.data.id,
+                        pokemonSprite: response.data.sprites.front_default,
+                    }
+                    ]
+                })
+            })
+        })
+
+    }, []);
+
 
     const evolution_column: GridColDef[] = [
         { field: 'id', width: 20, hide: true },
         {
             field: 'name', width: 300, align: 'right',
-            renderCell: (params) => (
+            renderCell: (params) => {
+                const rowData = params.row.name;
+                return(
                 <div>
-                    <Typography align={'right'} style={{ fontSize: 25, whiteSpace: "pre", paddingLeft: "100px", fontWeight: 800 }}>{params.value}:</Typography>
+                    <Typography align={'right'} style={{ fontSize: 25, whiteSpace: "pre", paddingLeft: "00px", fontWeight: 800 }}>{rowData[0]}:</Typography>
+                    <Avatar style={{ width: "80px", height: "80px", paddingLeft: "0px" }} src={rowData[2]}></Avatar>                
                 </div>
-            )
+                )
+            }
         },
         {
             field: 'rest', width: 300, align: 'left', type: 'string',
             renderCell: (params) => {
-                console.log({params})
                 const rowData = params.row.rest;
                 return (
                     <div>
-                        <Typography style={{ fontSize: 25, paddingLeft: "40px" }}>Level: {rowData[0]}</Typography>
-                        <Typography style={{ fontSize: 25, paddingLeft: "40px" }}>Condition: {rowData[1]}</Typography>
+                        <Typography style={{ fontSize: 25, paddingLeft: "0px" }}>Level: {rowData[0]}</Typography>
+                        <Typography style={{ fontSize: 25, paddingLeft: "0px" }}>Condition: {rowData[1]}</Typography>
                         {rowData[2] && <Typography style={{ fontSize: 25, paddingLeft: "0px", display: "flex", whiteSpace: "pre" }}>
                             Item: {rowData[2]} <Avatar style={{ width: "40px", height: "40px" }} src={rowData[3]}></Avatar>
                         </Typography>}
@@ -192,21 +187,26 @@ const PokeCardDetailed = ({ id, name, abilities, sprites, types, stats, evolutio
         }
     ];
 
-    var evolutionRows: GridRowsProp = [];
-    var i = 0;
+    let evolutionRows: GridRowsProp = [];
+    let i = 0;
 
 
     evolutions.forEach((evolution: { name: string, trigger: string, held_item: { name: string, url: string }, min_level: string }) => {
-        let item = evolutionItems.find(item => item.evolutionName === evolution.name);
+        let itemSprite = evolutionItems.find(item => item.evolutionName === evolution.name);
+        let itemNameDetails = evolutionNameProperties.find(item => item.pokemonName === evolution.name);
 
         evolutionRows.push({
             id: i++,
-            name: evolution.name,
+            name: [
+                evolution.name,
+                itemNameDetails?.pokemonID,
+                itemNameDetails?.pokemonSprite,
+            ],
             rest: [
                 evolution.min_level,
                 evolution.trigger,
                 evolution.held_item.name === 'Object_was_null' ? '' : evolution.held_item.name,
-                item ? item.itemSpriteUrl : ''
+                itemSprite ? itemSprite.itemSpriteUrl : ''
             ],
         });
 
@@ -305,7 +305,7 @@ const PokeCardDetailed = ({ id, name, abilities, sprites, types, stats, evolutio
                     showColumnRightBorder={false}
                     headerHeight={0}
                     disableExtendRowFullWidth={false}
-                    rowHeight={150}
+                    rowHeight={125}
                 ></DataGrid>
 
 
