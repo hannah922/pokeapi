@@ -116,11 +116,11 @@ interface pokemonAvatarInterface {
 
 const PokeCardDetailed = ({ id, name, abilities, sprites, types, stats, evolutions, moves }: PokeCardDetailedProps) => {
 
-    console.log({evolutions})
+    console.log({ evolutions })
 
     // mapName('test name', [{name: 'pika', sprite: 'pika.jpg'}, {name: 'bulbasaur', sprite: 'bulbasaur.jpg'}]);
-   const [evolutionItems, setEvolutionItems] = useState<Array<spriteInterface>>([]);
-   const [evolutionNameProperties, setEvolutionNameProperties] = useState<Array<pokemonAvatarInterface>>([]);
+    const [evolutionItems, setEvolutionItems] = useState<Array<spriteInterface>>([]);
+    const [evolutionNameProperties, setEvolutionNameProperties] = useState<Array<pokemonAvatarInterface>>([]);
 
     const history = useHistory();
     const classes = Styles();
@@ -133,11 +133,12 @@ const PokeCardDetailed = ({ id, name, abilities, sprites, types, stats, evolutio
             axios.get(`${evolution.held_item.url}`).then(response => {
                 setEvolutionItems(previousEvolutionItems => {
                     return [...previousEvolutionItems,
-                {
-                    evolutionName: evolution.name,
-                    itemName: evolution.held_item.name,
-                    itemSpriteUrl: response.data.sprites.default
-                }]})
+                    {
+                        evolutionName: evolution.name,
+                        itemName: evolution.held_item.name,
+                        itemSpriteUrl: response.data.sprites.default
+                    }]
+                })
             })
         })
     }, []);
@@ -166,11 +167,11 @@ const PokeCardDetailed = ({ id, name, abilities, sprites, types, stats, evolutio
             field: 'name', width: 300, align: 'right',
             renderCell: (params) => {
                 const rowData = params.row.name;
-                return(
-                <div>
-                    <Typography align={'right'} style={{ fontSize: 25, whiteSpace: "pre", paddingLeft: "00px", fontWeight: 800 }}>{rowData[0]}:</Typography>
-                    <Avatar style={{ width: "80px", height: "80px", paddingLeft: "0px" }} src={rowData[2]}></Avatar>                
-                </div>
+                return (
+                    <div>
+                        <Typography align={'right'} style={{ fontSize: 25, whiteSpace: "pre", paddingLeft: "00px", fontWeight: 800 }}>{rowData[0]}:</Typography>
+                        <Avatar style={{ width: "80px", height: "80px", paddingLeft: "0px" }} src={rowData[2]}></Avatar>
+                    </div>
                 )
             }
         },
@@ -192,15 +193,46 @@ const PokeCardDetailed = ({ id, name, abilities, sprites, types, stats, evolutio
     ];
 
     let evolutionRows: GridRowsProp = [];
-    let i = 0;
 
 
+
+    const statsColumns: GridColDef[] = [
+        { field: 'id', width: 20, hide: true },
+        {
+            field: 'stats', width: 300, align: 'left',
+            renderCell: (params) => {
+                const rowData = params.row.stats;
+                console.log("hoi", rowData);
+                return (
+                    <div>
+                        <Typography style={{ fontWeight: 800, fontSize: "25px", whiteSpace: "pre" }}>{rowData[0]}: </Typography> <Typography>{rowData[1]}</Typography>
+                    </div>
+                );
+            },
+        },
+        {
+            field: 'effort', width: 150, align: 'left',
+            renderCell: (params) => {
+                const rowData = params.row.effort;
+                return (
+                    <div>
+                        <Typography style={{ fontSize: "25px", fontStyle: (rowData == "0") ? "normal" : "italic" }}>(effort: {rowData})</Typography>
+                    </div>
+                );
+            },
+        },
+    ];
+
+    let statRows: GridRowsProp = [];
+
+
+    let evolutionID = 0;
     evolutions.forEach((evolution: { name: string, trigger: string, held_item: { name: string, url: string }, min_level: string }) => {
         let itemSprite = evolutionItems.find(item => item.evolutionName === evolution.name);
         let itemNameDetails = evolutionNameProperties.find(item => item.pokemonName === evolution.name);
 
         evolutionRows.push({
-            id: i++,
+            id: evolutionID++,
             name: [
                 evolution.name,
                 itemNameDetails?.pokemonID,
@@ -218,7 +250,20 @@ const PokeCardDetailed = ({ id, name, abilities, sprites, types, stats, evolutio
 
 
     }
-    )
+    );
+    let statID = 0;
+        stats.forEach((items: { name: string, effort: string, value: string }) => {
+         
+            statRows.push({
+                id: statID++,
+                stats: [items.name, items.value],
+                effort: items.effort,
+
+            });
+        });
+
+        console.log("whatthe: ", statRows);
+    
 
     return (
         <>
@@ -289,13 +334,27 @@ const PokeCardDetailed = ({ id, name, abilities, sprites, types, stats, evolutio
 
                         </TableCell>
                     </TableRow>
-                    <TableRow className={classes.table_row}>
 
-                        <Typography style={{ fontSize: "30px", fontWeight: 700, paddingLeft: "40px", whiteSpace: "pre" }}>Evolutions: </Typography>
 
-                    </TableRow>
+
                 </Table>
 
+                <DataGrid
+                    className={classes.datagrid}
+                    disableColumnSelector={true}
+                    disableColumnMenu={true}
+                    rows={statRows}
+                    columns={statsColumns}
+                    autoHeight={true}
+                    disableSelectionOnClick={true}
+                    hideFooter={true}
+                    showCellRightBorder={false}
+                    showColumnRightBorder={false}
+                    headerHeight={0}
+                    disableExtendRowFullWidth={false}
+                    rowHeight={75}
+                ></DataGrid>
+                <Typography style={{ fontSize: "30px", fontWeight: 700, paddingLeft: "40px", whiteSpace: "pre" }}>Evolutions: </Typography>
                 <DataGrid
                     className={classes.datagrid}
                     disableColumnSelector={true}
