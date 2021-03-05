@@ -3,3 +3,9 @@ add linking function to evolution
 revisit naming conventions
 
 remove borders from datagrid
+
+FIX held_item and item for evolution..
+fix level: null displaying
+revisit use effect in pokemon, what is that initialisation??
+
+rework pokemon usestate, and revisit the horribly nested axios 

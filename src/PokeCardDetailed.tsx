@@ -169,8 +169,8 @@ const PokeCardDetailed = ({ id, name, abilities, sprites, types, stats, evolutio
                 const rowData = params.row.name;
                 return (
                     <div>
-                        <Typography align={'right'} style={{ fontSize: 25, whiteSpace: "pre", paddingLeft: "00px", fontWeight: 800 }}>{rowData[0]}:</Typography>
-                        <Avatar style={{ width: "80px", height: "80px", paddingLeft: "0px" }} src={rowData[2]}></Avatar>
+                        <Typography align={'right'} style={{ fontSize: 25, whiteSpace: "pre", paddingLeft: "20px", fontWeight: 800 }}>{rowData[0]}:</Typography>
+                        <Avatar style={{ width: "80px", height: "80px", paddingLeft: "20px" }} src={rowData[2]}></Avatar>
                     </div>
                 )
             }
@@ -181,9 +181,9 @@ const PokeCardDetailed = ({ id, name, abilities, sprites, types, stats, evolutio
                 const rowData = params.row.rest;
                 return (
                     <div>
-                        <Typography style={{ fontSize: 25, paddingLeft: "0px" }}>Level: {rowData[0]}</Typography>
-                        <Typography style={{ fontSize: 25, paddingLeft: "0px" }}>Condition: {rowData[1]}</Typography>
-                        {rowData[2] && <Typography style={{ fontSize: 25, paddingLeft: "0px", display: "flex", whiteSpace: "pre" }}>
+                        <Typography style={{ fontSize: 25, paddingLeft: "10px" }}>Level: {rowData[0]}</Typography>
+                        <Typography style={{ fontSize: 25, paddingLeft: "10px" }}>Condition: {rowData[1]}</Typography>
+                        {rowData[2] && <Typography style={{ fontSize: 25, paddingLeft: "10px", display: "flex", whiteSpace: "pre" }}>
                             Item: {rowData[2]} <Avatar style={{ width: "40px", height: "40px" }} src={rowData[3]}></Avatar>
                         </Typography>}
                     </div>);
@@ -202,10 +202,9 @@ const PokeCardDetailed = ({ id, name, abilities, sprites, types, stats, evolutio
             field: 'stats', width: 300, align: 'left',
             renderCell: (params) => {
                 const rowData = params.row.stats;
-                console.log("hoi", rowData);
                 return (
                     <div>
-                        <Typography style={{ fontWeight: 800, fontSize: "25px", whiteSpace: "pre" }}>{rowData[0]}: </Typography> <Typography>{rowData[1]}</Typography>
+                        <Typography style={{ fontWeight: 800, fontSize: "25px", whiteSpace: "pre", paddingLeft: "20px", display: "flex"}}>{rowData[0]}: <Typography style={{display: "flex", fontSize: 25}}>{rowData[1]}</Typography></Typography> 
                     </div>
                 );
             },
@@ -216,7 +215,7 @@ const PokeCardDetailed = ({ id, name, abilities, sprites, types, stats, evolutio
                 const rowData = params.row.effort;
                 return (
                     <div>
-                        <Typography style={{ fontSize: "25px", fontStyle: (rowData == "0") ? "normal" : "italic" }}>(effort: {rowData})</Typography>
+                        <Typography style={{ fontSize: "25px", fontStyle: (rowData == "0") ? "normal" : "italic", paddingLeft: 10 }}>(effort: {rowData})</Typography>
                     </div>
                 );
             },
@@ -262,7 +261,7 @@ const PokeCardDetailed = ({ id, name, abilities, sprites, types, stats, evolutio
             });
         });
 
-        console.log("whatthe: ", statRows);
+    
     
 
     return (
@@ -309,36 +308,11 @@ const PokeCardDetailed = ({ id, name, abilities, sprites, types, stats, evolutio
                             </List>
                         </TableCell>
                     </TableRow>
-                    <TableRow className={classes.table_row}>
-                        <TableCell className={classes.table_cell_1} style={{ fontSize: "30px", fontWeight: 700, }}>
-                            Stats:
-                        </TableCell>
-                        <TableCell className={classes.table_cell_2} style={{ fontSize: "25px", }}>
-                            <List>
-                                <Typography style={{ fontSize: "30px", whiteSpace: "pre", fontStyle: "italic" }}>  Moves: </Typography>
-                                {stats.map((items: { name: string, value: string }) => {
-                                    return (
-                                        <ListItem className={classes.spacing}><Typography style={{ fontWeight: 800, fontSize: "25px" }}>{items.name}: </Typography>{items.value}</ListItem>
-                                    )
-                                })}
-                            </List>
-                        </TableCell>
-                        <TableCell>
-                            <List>
-                                {stats.map((items: { effort: string }) => {
-                                    return (
-                                        <ListItem className={classes.spacing}><Typography style={{ fontSize: "25px", fontStyle: (items.effort == "0") ? "normal" : "italic" }}>(effort: {items.effort})</Typography></ListItem>
-                                    )
-                                })}
-                            </List>
-
-                        </TableCell>
-                    </TableRow>
-
+ 
 
 
                 </Table>
-
+                <Typography style={{ fontSize: "40px", fontWeight: 700, paddingLeft: "10px", whiteSpace: "pre" }}>Moves & Stats: </Typography>
                 <DataGrid
                     className={classes.datagrid}
                     disableColumnSelector={true}
@@ -354,7 +328,7 @@ const PokeCardDetailed = ({ id, name, abilities, sprites, types, stats, evolutio
                     disableExtendRowFullWidth={false}
                     rowHeight={75}
                 ></DataGrid>
-                <Typography style={{ fontSize: "30px", fontWeight: 700, paddingLeft: "40px", whiteSpace: "pre" }}>Evolutions: </Typography>
+                <Typography style={{ fontSize: "40px", fontWeight: 700, paddingLeft: "10px", whiteSpace: "pre" }}>Evolutions: </Typography>
                 <DataGrid
                     className={classes.datagrid}
                     disableColumnSelector={true}
@@ -370,9 +344,6 @@ const PokeCardDetailed = ({ id, name, abilities, sprites, types, stats, evolutio
                     disableExtendRowFullWidth={false}
                     rowHeight={125}
                 ></DataGrid>
-
-
-
             </Box>
 
 

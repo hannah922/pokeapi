@@ -28,20 +28,8 @@ interface pokedata {
     url: string,
 };
 
-interface abilitydata {
-    ability: {
-        name: string,
-    },
-};
 
-interface statdata {
-    base_stat: string,
-    effort: string,
-    stat: {
-        name: string,
-    }
 
-};
 
 interface movedata {
     move: {
@@ -60,7 +48,7 @@ interface typedata {
 interface poketype {
     id: string,
     name: string,
-    abilities: [{ name: string }],
+    abilities: [{ name: string, url: string }],
     sprites: string,
     types: [{ name: string }],
     stats: [{
@@ -136,7 +124,7 @@ const Pokemon: FunctionComponent<componentProps> = ({ match }) => {
         var newPokeData_temp: poketype = {
             id: "",
             name: "",
-            abilities: [{ name: "" }],
+            abilities: [{ name: "", url: "" }],
             sprites: "",
             types: [{ name: "" }],
             stats: [{
@@ -163,17 +151,28 @@ const Pokemon: FunctionComponent<componentProps> = ({ match }) => {
 
                 //********//ABILITIES//********//
                 const { abilities } = data;
-                const ability_array: [{ name: string }] = abilities.map((ability: abilitydata) => (
+                interface abilitydata {
+                    ability: {
+                        name: string,
+                        url: string,
+                    },
+                };
+                const ability_array: [{ name: string, url: string }] = abilities.map((ability: {
+                    ability: {
+                        name: string,
+                        url: string,
+                    }}) => (
                     {
                         name: ability.ability.name,
+                        url: ability.ability.url,
                     }
                 ));
                 newPokeData_temp.abilities = ability_array;
-                //console.log("abilities: ", ability_array);
+                console.log("abilities: ", ability_array);
 
                 //********//STATS//********//
                 const { stats } = data;
-                const stats_array: [{ name: string, effort: string, value: string }] = stats.map((stat: statdata) => (
+                const stats_array: [{ name: string, effort: string, value: string }] = stats.map((stat: {base_stat: string, effort: string, stat: {name: string,}}) => (
                     {
                         value: stat.base_stat,
                         effort: stat.effort,
@@ -260,39 +259,66 @@ const Pokemon: FunctionComponent<componentProps> = ({ match }) => {
                         });
 
 
-                }); /* function recursion(evolutionChain: evolutionChainType) {
-                    let isLastPokemonInChain = evolutionChain.evolves_to.length === 0;
-                    let number_of_nodes = 0;
-                    evolutionChain.evolves_to.forEach(function (arrayitem: typeof evolutionChain) {
-                        console.log(arrayitem);
-                        speciesArrayPart.push({ name: arrayitem.species.name, url: arrayitem.species.url, 
-                            min_level: arrayitem.evolution_details[0].min_level,
-                                trigger: arrayitem.evolution_details[0].trigger.name,
-                            held_item: (arrayitem.evolution_details[0].held_item == null) ? "" : arrayitem.evolution_details[0].held_item[0]});
-                        number_of_nodes++;
-                    })
-                    if (!isLastPokemonInChain) {
-                        for (let i = 0; i < number_of_nodes; i++) {
-                            const evolvesTo: evolutionChainType = evolutionChain.evolves_to[i];
-                            //console.log({evolvesTo});
-                            const result = recursion(evolvesTo);
-                        }
-
-                    }
-                    return speciesArrayPart;
-                }*/
-
-
-
-
+                });
 
             });
 
-
-
-
-
     }, []);
+
+    //useEffect rework
+
+    useEffect(() => {
+        axios.get(`https://pokeapi.co/api/v2/pokemon/${match.params.pokemonId}`).then(response => {
+            const { data } = response;
+
+            //********//ABILITIES//********//
+
+            const { abilities } = data;
+            
+            const ability_array: [{ name: string, url: string }] = abilities.map((ability: {
+                ability: {
+                    name: string,
+                    url: string,
+                }
+            }) => (
+                {
+                    name: ability.ability.name,
+                    url: ability.ability.url,
+                }
+            ));
+            console.log("abilities: ", ability_array);
+
+
+            //********//STATS//********//
+
+            const { stats } = data;
+            const stats_array: [{ name: string, effort: string, value: string }] = stats.map((stat: {base_stat: string, effort: string, stat: {name: string}}) => (
+                {
+                    value: stat.base_stat,
+                    effort: stat.effort,
+                    name: stat.stat.name,
+                }
+            ));
+            console.log("stats: ", stats_array);
+
+
+            //********//TYPES//********//
+            const { types } = data;
+            const types_array: [{ name: string }] = types.map((type: {
+                type: {
+                    name: string
+                }}) => (
+                {
+                    name: type.type.name,
+                }
+            ));
+
+            console.log("types: ", types_array)
+
+
+        });
+    }, []);
+
 
 
 
