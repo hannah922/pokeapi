@@ -1,6 +1,6 @@
 add abilities description
 add linking function to evolution
-revisit naming conventions
+revisit naming conventions: interface with capital, constants with lower
 
 remove borders from datagrid
 
@@ -9,3 +9,5 @@ fix level: null displaying
 revisit use effect in pokemon, what is that initialisation??
 
 rework pokemon usestate, and revisit the horribly nested axios 
+
+fix axios requests if parameter is undefined

@@ -116,7 +116,6 @@ interface pokemonAvatarInterface {
 
 const PokeCardDetailed = ({ id, name, abilities, sprites, types, stats, evolutions, moves }: PokeCardDetailedProps) => {
 
-    console.log({ evolutions })
 
     // mapName('test name', [{name: 'pika', sprite: 'pika.jpg'}, {name: 'bulbasaur', sprite: 'bulbasaur.jpg'}]);
     const [evolutionItems, setEvolutionItems] = useState<Array<spriteInterface>>([]);
@@ -245,7 +244,7 @@ const PokeCardDetailed = ({ id, name, abilities, sprites, types, stats, evolutio
             ],
         });
 
-        console.log({ evolution_row: evolutionRows });
+       
 
 
     }

@@ -4,7 +4,6 @@ import { RouteComponentProps } from 'react-router-dom';
 import { AppBar, CircularProgress, createStyles, makeStyles, Typography } from '@material-ui/core';
 import { Toolbar } from '@material-ui/core';
 import { Grid } from '@material-ui/core';
-import MockData from './MockData';
 import PokeCard from './PokeCard';
 import Pokemon from './Pokemon';
 import axios from 'axios';
@@ -41,7 +40,7 @@ interface poketype {
 
 const Pokedex: FunctionComponent<RouteComponentProps> = () => {
 
-    const [PokemonData, setPokemonData] = useState(Object.values(MockData));
+
     const classes = Styles();
     //return <div> this is the pokedex page  </div>;
 
