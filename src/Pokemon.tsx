@@ -127,6 +127,12 @@ interface PokemonPartialAbilities {
     url: string,
 };
 
+interface DefaultEvolution {
+    name: string,
+    id: string,
+    sprite: string,
+}
+
 let abilitiesDone = false;
 
 const Pokemon: FunctionComponent<componentProps> = ({ match }) => {
@@ -134,7 +140,9 @@ const Pokemon: FunctionComponent<componentProps> = ({ match }) => {
     //return <div> this is the pokemon page {match.params.pokemonId} </div>;
     const [newPokemonDataDetailed, setNewPokemonDataDetailed] = useState<poketype>();
     const [detailedPokemonDataMain, setDetailedPokemonDataMain] = useState<PokemonPartialMain>();
-    const [urlBridgeEvolution, setUrlBridgeEvolution] = useState("");
+    const [urlBridgeEvolution, setUrlBridgeEvolution] = useState<string>();
+    const [defaultEvolution, setDefaultEvolution] = useState<string>();
+    const [defaultEvolutionExpanded, setDefaultEvolutionExpanded] = useState<DefaultEvolution>();
     const [detailedPokemonDataEvolution, setDetailedPokemonDataEvolution] = useState<Array<PokemonPartialEvolution>>([]);
     const [detailedPokemonDataAbilities, setDetailedPokemonDataAbilities] = useState<Array<PokemonPartialAbilities>>([]);
 
@@ -206,7 +214,27 @@ const Pokemon: FunctionComponent<componentProps> = ({ match }) => {
         });
     }, [detailedPokemonDataMain]);
 
+    useEffect(() => {
+        axios.get(`${urlBridgeEvolution}`).then(response => {
+            const { data } = response;
+            setDefaultEvolution(`${data.chain.species.name}`);
+        }).catch(error => {
+            console.log("Error in an axios: ", error);
+        });
+    }, [urlBridgeEvolution]);
 
+    useEffect(() => {
+        axios.get(`https://pokeapi.co/api/v2/pokemon/${defaultEvolution}`).then(response => {
+            const { data } = response;
+            setDefaultEvolutionExpanded({
+                name: data.name,
+                id: data.id,
+                sprite: data.sprites.front_default,
+            });
+        }).catch(error => {
+            console.log("Error in an axios: ", error);
+        });
+    }, [defaultEvolution]);
 
 
 
@@ -331,7 +359,7 @@ const Pokemon: FunctionComponent<componentProps> = ({ match }) => {
 
     return (
         <>
-            {( abilitiesDone && detailedPokemonDataMain != undefined && detailedPokemonDataEvolution.length != 0 && detailedPokemonDataAbilities.length != 0) ? (
+            {(abilitiesDone && detailedPokemonDataMain != undefined && defaultEvolutionExpanded != undefined && detailedPokemonDataEvolution.length != 0 && detailedPokemonDataAbilities.length != 0) ? (
 
                 <div>
                     <PokeCardDetailed
@@ -342,6 +370,7 @@ const Pokemon: FunctionComponent<componentProps> = ({ match }) => {
                         sprite={detailedPokemonDataMain.sprite}
                         types={detailedPokemonDataMain.types}
                         evolutions={detailedPokemonDataEvolution}
+                        default_evolution={defaultEvolutionExpanded}
                     />
                     <div>{`evolutions in state: ${detailedPokemonDataEvolution.length}`}</div>
                 </div>

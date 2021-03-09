@@ -1,4 +1,4 @@
-include first level of pokemon evolution
+add navigation
 revisit naming conventions: interface with capital, constants with lower
 
 remove borders from datagrid

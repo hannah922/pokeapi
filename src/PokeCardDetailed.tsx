@@ -29,6 +29,11 @@ interface PokeCardDetailedProps {
         }>,
         min_level: string,
     }>,
+    default_evolution: {
+        id: string,
+        name: string,
+        sprite: string,
+    },
 }
 
 
@@ -117,7 +122,7 @@ interface evolutionConditions {
     sprite: string,
 };
 
-const PokeCardDetailed = ({ id, name, abilities, sprite, types, stats, evolutions, }: PokeCardDetailedProps) => {
+const PokeCardDetailed = ({ id, name, abilities, sprite, types, stats, evolutions, default_evolution}: PokeCardDetailedProps) => {
 
     const [evolutionNameProperties, setEvolutionNameProperties] = useState<Array<pokemonAvatarInterface>>([]);
     const [evolutionConditions, setEvolutionConditions] = useState<Array<evolutionConditions>>([]);
@@ -183,7 +188,7 @@ const PokeCardDetailed = ({ id, name, abilities, sprite, types, stats, evolution
     }, [evolutions]);
 
 
-    const evolution_column: GridColDef[] = [
+    const evolutionColumn: GridColDef[] = [
         { field: 'id', width: 20, hide: true },
         {
             field: 'name', width: 300, align: 'right',
@@ -226,6 +231,42 @@ const PokeCardDetailed = ({ id, name, abilities, sprite, types, stats, evolution
         }
     ];
 
+    const evolutionDefaultColumn: GridColDef[] = [
+        { field: 'id', width: 20, hide: true },
+        {
+            field: 'name', width: 300, align: 'right',
+            renderCell: (params) => {
+                const rowData = params.row.name;
+                return (
+                    <div>
+                        <Typography align={'right'} style={{ fontSize: 25, whiteSpace: "pre", paddingLeft: "20px", fontWeight: 800 }}>{rowData[0]}:</Typography>
+                        <Avatar style={{ width: "80px", height: "80px", paddingLeft: "20px" }} src={rowData[1]}></Avatar>
+                    </div>
+                )
+            }
+        },
+        {
+            field: 'doesnothing', width: 300, align: 'left', type: 'string',
+            renderCell: (params) => {
+                return (
+                    <div>
+                        <Typography style={{ fontSize: 25, paddingLeft: "10px", fontStyle: "italic" }}>(Default)</Typography>
+
+                        
+                    </div>
+                    )
+            },
+
+        },
+    ];
+
+
+    let evolutionDefaultRow: GridRowsProp = [{
+        id: 0,
+        name: [ default_evolution.name, default_evolution.sprite ],
+        doesnothing: default_evolution.id,
+
+    }];
     let evolutionRows: GridRowsProp = [];
 
 
@@ -353,6 +394,9 @@ const PokeCardDetailed = ({ id, name, abilities, sprite, types, stats, evolution
 
     }
     );
+
+    
+
     let statID = 0;
     stats.forEach((stat: { name: string, effort: string, value: string }) => {
 
@@ -413,7 +457,7 @@ const PokeCardDetailed = ({ id, name, abilities, sprite, types, stats, evolution
                     showColumnRightBorder={false}
                     headerHeight={0}
                     disableExtendRowFullWidth={false}
-                    rowHeight={150}
+                    rowHeight={75}
                     density='comfortable'
                 ></DataGrid>
                 <Typography style={{ fontSize: "40px", fontWeight: 700, paddingLeft: "10px", whiteSpace: "pre" }}>Abilities: </Typography>
@@ -452,14 +496,31 @@ const PokeCardDetailed = ({ id, name, abilities, sprite, types, stats, evolution
                 <Typography style={{ fontSize: "40px", fontWeight: 700, paddingLeft: "10px", whiteSpace: "pre" }}>Evolutions: </Typography>
                 <DataGrid
                     onRowClick={(params) => {
-                        //console.log("test40: ", params.row.name[1]);
+                        history.push(`/${params.row.doesnothing}`)
+                    }}
+                    className={classes.datagrid}
+                    disableColumnSelector={true}
+                    disableColumnMenu={true}
+                    rows={evolutionDefaultRow}
+                    columns={evolutionDefaultColumn}
+                    autoHeight={true}
+                    disableSelectionOnClick={true}
+                    hideFooter={true}
+                    showCellRightBorder={false}
+                    showColumnRightBorder={false}
+                    headerHeight={0}
+                    disableExtendRowFullWidth={false}
+                    rowHeight={150}
+                ></DataGrid>
+                <DataGrid
+                    onRowClick={(params) => {
                         history.push(`/${params.row.name[1]}`)
                     }}
                     className={classes.datagrid}
                     disableColumnSelector={true}
                     disableColumnMenu={true}
                     rows={evolutionRows}
-                    columns={evolution_column}
+                    columns={evolutionColumn}
                     autoHeight={true}
                     disableSelectionOnClick={true}
                     hideFooter={true}
