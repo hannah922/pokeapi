@@ -137,16 +137,12 @@ let abilitiesDone = false;
 
 const Pokemon: FunctionComponent<componentProps> = ({ match }) => {
 
-    //return <div> this is the pokemon page {match.params.pokemonId} </div>;
-    const [newPokemonDataDetailed, setNewPokemonDataDetailed] = useState<poketype>();
     const [detailedPokemonDataMain, setDetailedPokemonDataMain] = useState<PokemonPartialMain>();
     const [urlBridgeEvolution, setUrlBridgeEvolution] = useState<string>();
     const [defaultEvolution, setDefaultEvolution] = useState<string>();
     const [defaultEvolutionExpanded, setDefaultEvolutionExpanded] = useState<DefaultEvolution>();
     const [detailedPokemonDataEvolution, setDetailedPokemonDataEvolution] = useState<Array<PokemonPartialEvolution>>([]);
     const [detailedPokemonDataAbilities, setDetailedPokemonDataAbilities] = useState<Array<PokemonPartialAbilities>>([]);
-
-    //useEffect rework
 
     useEffect(() => {
         console.log("first useEffect triggered! (no dependencies)");
@@ -205,25 +201,28 @@ const Pokemon: FunctionComponent<componentProps> = ({ match }) => {
 
 
     useEffect(() => {
+        if(detailedPokemonDataMain == undefined) {} else {
         console.log("second useEffect triggered! (dependent on the first one)");
         axios.get(`${detailedPokemonDataMain?.species_url}`).then(response => {
             const { data } = response;
             setUrlBridgeEvolution(data.evolution_chain.url);
         }).catch(error => {
             console.log("Getting an error in the second useEffect: ", error);
-        });
+        }); };
     }, [detailedPokemonDataMain]);
 
     useEffect(() => {
+        if(urlBridgeEvolution == undefined) {} else {
         axios.get(`${urlBridgeEvolution}`).then(response => {
             const { data } = response;
             setDefaultEvolution(`${data.chain.species.name}`);
         }).catch(error => {
             console.log("Error in an axios: ", error);
-        });
+        }); };
     }, [urlBridgeEvolution]);
 
     useEffect(() => {
+        if (defaultEvolution == undefined) {} else {
         axios.get(`https://pokeapi.co/api/v2/pokemon/${defaultEvolution}`).then(response => {
             const { data } = response;
             setDefaultEvolutionExpanded({
@@ -233,12 +232,13 @@ const Pokemon: FunctionComponent<componentProps> = ({ match }) => {
             });
         }).catch(error => {
             console.log("Error in an axios: ", error);
-        });
+        }); };
     }, [defaultEvolution]);
 
 
 
     useEffect(() => {
+        if (urlBridgeEvolution == undefined) {} else {
         console.log("third useEffect triggered! (dependent on the second one)");
         axios.get(`${urlBridgeEvolution}`).then(response => {
             const { data } = response;
@@ -326,11 +326,12 @@ const Pokemon: FunctionComponent<componentProps> = ({ match }) => {
         }).catch(error => {
             console.log("Getting an error in the third useEffect: ", error)
         }
-        );
+        ); };
 
     }, [urlBridgeEvolution]);
 
     useEffect(() => {
+        if (detailedPokemonDataMain == undefined) {} else {
         let forEachFinish = 0;
         console.log("fourth useEffect triggered! (dependent on the second one)");
         detailedPokemonDataMain?.abilities.forEach((item: { name: string, url: string }) => {
@@ -353,7 +354,7 @@ const Pokemon: FunctionComponent<componentProps> = ({ match }) => {
             if (forEachFinish === detailedPokemonDataMain?.abilities.length) {
                 abilitiesDone = true;
             };
-        });
+        }); };
     }, [detailedPokemonDataMain]);
 
 
