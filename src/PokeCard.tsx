@@ -7,6 +7,7 @@ interface PokeCardProps {
     name: string,
     id: string,
     sprite: string,
+    pokedexPageId: string,
 };
 
 
@@ -37,12 +38,15 @@ const toUpperCase = (name: string) => {
 
 };
 
-const PokeCard = ({ id, name, sprite }: PokeCardProps) => {
+const PokeCard = ({ id, name, sprite, pokedexPageId }: PokeCardProps) => {
     const history = useHistory();
     const classes = Styles();
     return (
         <Grid container spacing={0} item xs={12} sm={2}>
-            <Card onClick={() => history.push(`/${id}`)} className={classes.cards}>
+            <Card onClick={() => history.push(
+                {
+                    pathname: `/${pokedexPageId}/${id}`
+                })} className={classes.cards}>
                 <CardContent className={classes.typography_id}>
                     <Typography variant="h4">
                         {id}

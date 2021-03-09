@@ -10,7 +10,8 @@ import {
   Route,
   Link,
   match,
-  Switch
+  Switch,
+  Redirect
 } from 'react-router-dom';
 
 interface pokemonID {id: string; }
@@ -21,9 +22,12 @@ interface pokemonID {id: string; }
 const App = (): React.ReactElement =>  {
   return (
     <Switch>
-      <Route exact path="/" render={(props) => <Pokedex {...props} />} />
+      <Route exact path="/">
+    <Redirect to="/1" />
+</Route>
+      <Route exact path="/:pageId" render={(props) => <Pokedex {...props} />} />
     <Route
-      exact path="/:pokemonId" render={(props) => <Pokemon {...props} />}
+      exact path="/:pageId/:pokemonId" render={(props) => <Pokemon {...props} />}
     />
     </Switch>
   );
