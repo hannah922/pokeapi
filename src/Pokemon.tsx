@@ -324,17 +324,11 @@ const Pokemon: FunctionComponent<componentProps> = ({ match }) => {
 
             if (forEachFinish === detailedPokemonDataMain?.abilities.length) {
                 abilitiesDone = true;
-                console.log("test10: we got all the details!");
-
-                console.log("test10: uhh ", abilitiesDone);
             };
         });
     }, [detailedPokemonDataMain]);
 
 
-    console.log("test10: just the normal var: ", abilitiesDone);
-    console.log("test13: evolutions? ", detailedPokemonDataEvolution);
-    console.log("test10.. is it true or fale? ", ( abilitiesDone && detailedPokemonDataMain != undefined && detailedPokemonDataEvolution.length != 0 && detailedPokemonDataAbilities.length != 0))
     return (
         <>
             {( abilitiesDone && detailedPokemonDataMain != undefined && detailedPokemonDataEvolution.length != 0 && detailedPokemonDataAbilities.length != 0) ? (

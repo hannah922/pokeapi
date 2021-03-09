@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Grid, Card, CardContent, CardMedia, makeStyles, Typography, Button, Avatar, Box, Divider, List, Table, TableRow, TableCell } from '@material-ui/core';
+import { Grid, Card, CardContent, CardMedia, makeStyles, Typography, Button, Avatar, Box, Divider, List, Table, TableRow, TableCell, withStyles } from '@material-ui/core';
 import { Route, Router, Switch } from 'react-router-dom';
 import { useHistory } from "react-router-dom";
 import { ListItem } from '@material-ui/core';
@@ -84,6 +84,7 @@ const Styles = makeStyles({
         overflow: "hidden",
         borderBottom: "none",
         borderTop: "none",
+        whiteSpace: "normal",
     },
 
 });
@@ -92,6 +93,8 @@ const toUpperCase = (name: string) => {
     return name.charAt(0).toUpperCase() + name.slice(1);
 
 };
+
+
 
 
 
@@ -121,6 +124,7 @@ const PokeCardDetailed = ({ id, name, abilities, sprite, types, stats, evolution
 
     const history = useHistory();
     const classes = Styles();
+
     useEffect(() => {
         evolutions.forEach((evolution) => {
             let temporaryConditionArray: Array<{ id: string, name: string }> = [];
@@ -128,32 +132,32 @@ const PokeCardDetailed = ({ id, name, abilities, sprite, types, stats, evolution
                 if (evolution.special[i].url === "NULL_gender") {
                     temporaryConditionArray.push({ id: "0", name: evolution.special[i].name });
                 } else
-                if (evolution.special[i].url === "NULL_knownmove") {
-                    temporaryConditionArray.push({ id: "1", name: evolution.special[i].name });
-                } else
-                if (evolution.special[i].url === "NULL_location") {
-                    temporaryConditionArray.push({ id: "2", name: evolution.special[i].name });
-                } else
-                if (evolution.special[i].url != "NULL_gender" && evolution.special[i].url != "NULL_knownmove" && evolution.special[i].url != "NULL_location") {
-                    temporaryConditionArray.push({ id: "3", name: evolution.special[i].name });
-                    axios.get(`${evolution.special[i].url}`).then(response => {
-  
-                        setEvolutionConditions(previousState => {
-                            return [...previousState,
-                            {
-                                pokemonName: evolution.name,
-                                condition: (temporaryConditionArray.length > 0) ? temporaryConditionArray : [{ id: "100", name: "" }],
-                                sprite: response.data.sprites.default,
-                            }]
-                        });
-                    }).catch(error => {
-                        console.log("Error in the first useState in PokeCardDetailed: ", error);
-                    });
+                    if (evolution.special[i].url === "NULL_knownmove") {
+                        temporaryConditionArray.push({ id: "1", name: evolution.special[i].name });
+                    } else
+                        if (evolution.special[i].url === "NULL_location") {
+                            temporaryConditionArray.push({ id: "2", name: evolution.special[i].name });
+                        } else
+                            if (evolution.special[i].url != "NULL_gender" && evolution.special[i].url != "NULL_knownmove" && evolution.special[i].url != "NULL_location") {
+                                temporaryConditionArray.push({ id: "3", name: evolution.special[i].name });
+                                axios.get(`${evolution.special[i].url}`).then(response => {
 
-                };
+                                    setEvolutionConditions(previousState => {
+                                        return [...previousState,
+                                        {
+                                            pokemonName: evolution.name,
+                                            condition: (temporaryConditionArray.length > 0) ? temporaryConditionArray : [{ id: "100", name: "" }],
+                                            sprite: response.data.sprites.default,
+                                        }]
+                                    });
+                                }).catch(error => {
+                                    console.log("Error in the first useState in PokeCardDetailed: ", error);
+                                });
+
+                            };
 
             };
-            
+
 
         });
     }, [evolutions]);
@@ -254,6 +258,61 @@ const PokeCardDetailed = ({ id, name, abilities, sprite, types, stats, evolution
 
     let statRows: GridRowsProp = [];
 
+    const abilitiesColumns: GridColDef[] = [
+        { field: 'id', width: 20, hide: true },
+        {
+            field: 'abilities', width: 270, align: 'left',
+            renderCell: (params) => {
+                const rowData = params.row.abilities;
+                return (
+                    <div>
+                        <Typography style={{ fontWeight: 800, fontSize: "25px", whiteSpace: "pre", paddingLeft: "20px" }}>{rowData}:</Typography>
+                    </div>
+                );
+            },
+        },
+        {
+            field: 'descriptions', width: 330, align: 'left',
+            renderCell: (params) => {
+                const rowData = params.row.descriptions;
+                let cellHeight: string;
+                if(rowData.length <= 20) {
+                    cellHeight = "50px";
+                } else if (rowData.length <= 40) {
+                    cellHeight = "100px";
+                } else if (rowData.length <= 60) {
+                    cellHeight = "150px";
+                } else {
+                    cellHeight = "200px";
+                };
+
+                return (
+                    <div>
+                        {<Typography style={{fontSize: "25px", whiteSpace: "normal", paddingLeft: "20px", height: cellHeight, alignItems: "center", paddingTop: "0px"}}>{rowData}</Typography> }
+                    </div>
+                );
+            },
+        },
+
+    ];
+
+    let abilitiesRows: GridRowsProp = [];
+
+    const typeColumns: GridColDef[]= [
+        { field: 'id', width: 20, hide: true },
+        {field: "types", width: 330, align: 'left',
+        renderCell: (params) => {
+            const rowData = params.row.types;
+            return (
+                <div>
+                    <Typography style={{ fontWeight: 800, fontSize: "25px", whiteSpace: "pre", paddingLeft: "20px" }}>{rowData}</Typography>
+                </div>
+            );
+        },
+    }
+    ];
+
+    let typeRows: GridRowsProp = [];
 
     let evolutionID = 0;
     evolutions.forEach((evolution: { name: string, trigger: string, special: Array<{ name: string, url: string }>, min_level: string }) => {
@@ -295,13 +354,31 @@ const PokeCardDetailed = ({ id, name, abilities, sprite, types, stats, evolution
     }
     );
     let statID = 0;
-    stats.forEach((items: { name: string, effort: string, value: string }) => {
+    stats.forEach((stat: { name: string, effort: string, value: string }) => {
 
         statRows.push({
             id: statID++,
-            stats: [items.name, items.value],
-            effort: items.effort,
+            stats: [stat.name, stat.value],
+            effort: stat.effort,
 
+        });
+    });
+
+    let abilitiesID = 0;
+    abilities.forEach((ability: { name: string, url: string }) => {
+        abilitiesRows.push({
+            id: abilitiesID++,
+            abilities: ability.name,
+            descriptions: ability.url,
+        });
+
+    });
+
+    let typeID = 0;
+    types.forEach((type: {name: string}) =>{
+        typeRows.push({
+            id: typeID++,
+            types: type.name,
         });
     });
 
@@ -322,40 +399,40 @@ const PokeCardDetailed = ({ id, name, abilities, sprite, types, stats, evolution
                     src={sprite}
                     style={{ height: "250px", width: "250px" }}>
                 </Avatar>
-                <Table className={classes.table}>
-                    <TableRow className={classes.table_row} >
-                        <TableCell className={classes.table_cell_1} style={{ fontSize: "30px", fontWeight: 700, }}>
-                            Types:
-                        </TableCell>
-                        <TableCell className={classes.table_cell_2} style={{ fontSize: "25px", }}>
-                            <List>
-                                {types.map((name: { name: string }) => {
-                                    return (
-                                        <ListItem>{name.name}</ListItem>
-                                    )
-                                })}
-                            </List>
-                        </TableCell>
-                    </TableRow>
-                    <TableRow className={classes.table_row}>
-                        <TableCell className={classes.table_cell_1} style={{ fontSize: "30px", fontWeight: 700, }}>
-                            Abilities:
-                        </TableCell>
-                        <TableCell className={classes.table_cell_2} style={{ fontSize: "25px", }}>
-                            <List>
-                                {abilities.map((name: { name: string }) => {
-                                    return (
-                                        <ListItem>{name.name}</ListItem>
-                                    )
-                                })}
-
-                            </List>
-                        </TableCell>
-                    </TableRow>
-
-
-
-                </Table>
+                <Typography style={{ fontSize: "40px", fontWeight: 700, paddingLeft: "10px", whiteSpace: "pre" }}>Types: </Typography>
+                <DataGrid 
+                    className={classes.datagrid}
+                    disableColumnSelector={true}
+                    disableColumnMenu={true}
+                    rows={typeRows}
+                    columns={typeColumns}
+                    autoHeight={true}
+                    disableSelectionOnClick={true}
+                    hideFooter={true}
+                    showCellRightBorder={false}
+                    showColumnRightBorder={false}
+                    headerHeight={0}
+                    disableExtendRowFullWidth={false}
+                    rowHeight={150}
+                    density='comfortable'
+                ></DataGrid>
+                <Typography style={{ fontSize: "40px", fontWeight: 700, paddingLeft: "10px", whiteSpace: "pre" }}>Abilities: </Typography>
+                <DataGrid 
+                    className={classes.datagrid}
+                    disableColumnSelector={true}
+                    disableColumnMenu={true}
+                    rows={abilitiesRows}
+                    columns={abilitiesColumns}
+                    autoHeight={true}
+                    disableSelectionOnClick={true}
+                    hideFooter={true}
+                    showCellRightBorder={false}
+                    showColumnRightBorder={false}
+                    headerHeight={0}
+                    disableExtendRowFullWidth={false}
+                    rowHeight={150}
+                    density='comfortable'
+                ></DataGrid>
                 <Typography style={{ fontSize: "40px", fontWeight: 700, paddingLeft: "10px", whiteSpace: "pre" }}>Moves & Stats: </Typography>
                 <DataGrid
                     className={classes.datagrid}
@@ -374,6 +451,10 @@ const PokeCardDetailed = ({ id, name, abilities, sprite, types, stats, evolution
                 ></DataGrid>
                 <Typography style={{ fontSize: "40px", fontWeight: 700, paddingLeft: "10px", whiteSpace: "pre" }}>Evolutions: </Typography>
                 <DataGrid
+                    onRowClick={(params) => {
+                        //console.log("test40: ", params.row.name[1]);
+                        history.push(`/${params.row.name[1]}`)
+                    }}
                     className={classes.datagrid}
                     disableColumnSelector={true}
                     disableColumnMenu={true}
@@ -386,7 +467,7 @@ const PokeCardDetailed = ({ id, name, abilities, sprite, types, stats, evolution
                     showColumnRightBorder={false}
                     headerHeight={0}
                     disableExtendRowFullWidth={false}
-                    rowHeight={125}
+                    rowHeight={150}
                 ></DataGrid>
             </Box>
 
