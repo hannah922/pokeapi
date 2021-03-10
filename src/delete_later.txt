@@ -1,9 +1,10 @@
-revisit naming conventions: interface with capital, constants with lower
+move interfaces to a different file??
 if evolution chain is empty program gets stuck: needs fixing
-add check to abilities description language
 
+fix back button with non default pagesize!!! fix back button in general
 
+fix styles??
 
-fix back button with non default pagesize
+better commenting!!
 
-fix styles
+error handling in url: undefined

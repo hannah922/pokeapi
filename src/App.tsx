@@ -1,22 +1,7 @@
 import React from 'react';
 import Pokedex from './Pokedex'
 import Pokemon from './Pokemon'
-//import { Route, Switch} from 'react-router-dom';
-
-import { RouteComponentProps } from 'react-router';
-
-import {
-  BrowserRouter as Router,
-  Route,
-  Link,
-  match,
-  Switch,
-  Redirect
-} from 'react-router-dom';
-
-interface pokemonID {id: string; }
-
-
+import {Route, Switch, Redirect} from 'react-router-dom';
 
 
 const App = (): React.ReactElement =>  {

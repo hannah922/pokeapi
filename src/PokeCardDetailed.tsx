@@ -1,11 +1,9 @@
 import React, { useState, useEffect } from 'react';
-import { Grid, Card, CardContent, CardMedia, makeStyles, Typography, Button, Avatar, Box, Divider, List, Table, TableRow, TableCell, withStyles, Paper, Container as div } from '@material-ui/core';
-import { Route, Router, Switch } from 'react-router-dom';
+import { makeStyles, Typography, Avatar, Paper, } from '@material-ui/core';
 import { useHistory } from "react-router-dom";
-import { ListItem } from '@material-ui/core';
-import { DataGrid, GridCellParams, GridColDef, GridRowModel, GridRowsProp } from '@material-ui/data-grid';
-import { stringify } from 'querystring';
+import { DataGrid, GridColDef, GridRowsProp } from '@material-ui/data-grid';
 import axios from 'axios';
+
 
 
 
@@ -34,6 +32,7 @@ interface PokeCardDetailedProps {
         name: string,
         sprite: string,
     },
+    url_history: string,
 }
 
 
@@ -54,10 +53,6 @@ const Styles = makeStyles({
         fontStyle: "italic",
     },
     paper: {
-        // margin: "auto",
-        // borderRight: "5px solid black",
-        // backgroundColor: "cyan",
-        // width: "700px",
         borderRight: '0.5em solid black', 
         borderBottom: '0.3em solid black',
         padding: '0.5em',
@@ -106,17 +101,6 @@ const toUpperCase = (name: string) => {
 
 };
 
-
-
-
-
-
-interface spriteInterface {
-    evolutionName: string,
-    itemName: string,
-    itemSpriteUrl: string,
-};
-
 interface pokemonAvatarInterface {
     pokemonName: string,
     pokemonID: string,
@@ -129,7 +113,8 @@ interface evolutionConditions {
     sprite: string,
 };
 
-const PokeCardDetailed = ({ id, name, abilities, sprite, types, stats, evolutions, default_evolution}: PokeCardDetailedProps) => {
+const PokeCardDetailed = ({ id, name, abilities, sprite, types, stats, evolutions, default_evolution, url_history}: PokeCardDetailedProps) => {
+
 
     const [evolutionNameProperties, setEvolutionNameProperties] = useState<Array<pokemonAvatarInterface>>([]);
     const [evolutionConditions, setEvolutionConditions] = useState<Array<evolutionConditions>>([]);
@@ -189,7 +174,9 @@ const PokeCardDetailed = ({ id, name, abilities, sprite, types, stats, evolution
                     }
                     ]
                 })
-            })
+            }).catch(error => {
+                console.log("Getting an error in the evolution details axios: ", error);
+            });
         })
 
     }, [evolutions]);
@@ -213,7 +200,6 @@ const PokeCardDetailed = ({ id, name, abilities, sprite, types, stats, evolution
             field: 'rest', width: 300, align: 'left', type: 'string',
             renderCell: (params) => {
                 const rowData = params.row.rest;
-                console.log("test1: rowData: ", rowData);
                 let temporaryArray = rowData[2].split('|');
                 let conditions = (temporaryArray.length) - 1;
                 return (
@@ -323,6 +309,7 @@ const PokeCardDetailed = ({ id, name, abilities, sprite, types, stats, evolution
             field: 'descriptions', width: 330, align: 'left',
             renderCell: (params) => {
                 const rowData = params.row.descriptions;
+                console.log("debugging: ", params.row.description);
                 let cellHeight: string;
                 if(rowData.length <= 20) {
                     cellHeight = "50px";
@@ -365,8 +352,6 @@ const PokeCardDetailed = ({ id, name, abilities, sprite, types, stats, evolution
     let evolutionID = 0;
     evolutions.forEach((evolution: { name: string, trigger: string, special: Array<{ name: string, url: string }>, min_level: string }) => {
         let itemSprite = evolutionConditions.find(item => item.pokemonName === evolution.name);
-        console.log("test5: evolutioncondition: ", evolutionConditions);
-        console.log("test5: itemsprite: ", itemSprite);
         let itemNameDetails = evolutionNameProperties.find(item => item.pokemonName === evolution.name);
         let temporaryString = "";
         for (let i = 0; i < ((itemSprite != undefined) ? itemSprite!.condition.length : 0); i++) {
@@ -417,6 +402,7 @@ const PokeCardDetailed = ({ id, name, abilities, sprite, types, stats, evolution
 
     let abilitiesID = 0;
     abilities.forEach((ability: { name: string, url: string }) => {
+        console.log("debugging: abilities: ", ability);
         abilitiesRows.push({
             id: abilitiesID++,
             abilities: ability.name,
@@ -503,8 +489,12 @@ const PokeCardDetailed = ({ id, name, abilities, sprite, types, stats, evolution
                 <Typography style={{ fontSize: "40px", fontWeight: 700, paddingLeft: "10px", whiteSpace: "pre" }}>Evolutions: </Typography>
                 <DataGrid
                     onRowClick={(params) => {
-                        history.push(`/${params.row.doesnothing}`)
-                    }}
+                        history.push(
+                            {
+                            pathname: `/${url_history}/${params.row.doesnothing}` }
+                        );
+                        window.location.reload();
+                    } }
                     className={classes.datagrid}
                     disableColumnSelector={true}
                     disableColumnMenu={true}
@@ -520,9 +510,13 @@ const PokeCardDetailed = ({ id, name, abilities, sprite, types, stats, evolution
                     rowHeight={150}
                 ></DataGrid>
                 <DataGrid
-                    onRowClick={(params) => {
-                        history.push(`/${params.row.name[1]}`)
-                    }}
+                         onRowClick={(params) => {
+                            history.push(
+                                {
+                                pathname: `/${url_history}/${params.row.name[1]}` }
+                            );
+                            window.location.reload();
+                        } }
                     className={classes.datagrid}
                     disableColumnSelector={true}
                     disableColumnMenu={true}

@@ -1,11 +1,7 @@
-import React, { ChangeEvent, MouseEventHandler, useEffect, useState } from 'react';
-import { FunctionComponent } from 'react';
-import { RouteComponentProps, useHistory } from 'react-router-dom';
-import { AppBar, Button, CircularProgress, createStyles, Input, makeStyles, Select, TextField, Typography } from '@material-ui/core';
-import { Toolbar } from '@material-ui/core';
-import { Grid } from '@material-ui/core';
+import React, { ChangeEvent, FunctionComponent, useEffect, useState } from 'react';
+import { useHistory } from 'react-router-dom';
+import { AppBar, Button, CircularProgress, makeStyles, Select, TextField, Typography, Toolbar, Grid } from '@material-ui/core';
 import PokeCard from './PokeCard';
-import Pokemon from './Pokemon';
 import axios from 'axios';
 
 
@@ -17,15 +13,6 @@ interface componentProps {
     }
 }
 
-
-const useStyles = makeStyles({
-    pokedexContainer: {
-        paddingTop: "20px",
-        paddingLeft: "50px",
-        paddingRight: "50px",
-    }
-});
-
 const Styles = makeStyles({
     root: {
         paddingTop: "20px",
@@ -35,13 +22,13 @@ const Styles = makeStyles({
 });
 
 
-interface pokedata {
+interface Pokedata {
     name: string,
     url: string,
 };
 
 
-interface poketype {
+interface Poketype {
     id: string,
     name: string,
     sprite: string,
@@ -58,7 +45,7 @@ const Pokedex: FunctionComponent<componentProps> = ({ match }) => {
     const [pokemonLimit, setPokemonLimit] = useState<number>(54);
     const [textFieldData, setTextFieldData] = useState<string>("54");
     const [thisDoesNothing, setThisDoesNothing] = useState<string>("");
-    const [newPokemonData, setNewPokemonData] = useState<Array<poketype>>([]);
+    const [newPokemonData, setNewPokemonData] = useState<Array<Poketype>>([]);
 
     const [nextPage, setNextPage] = useState<string>();
     const [prevPage, setPrevPage] = useState<string>();
@@ -76,7 +63,7 @@ const Pokedex: FunctionComponent<componentProps> = ({ match }) => {
                 setNextPage(data.next);
                 setPrevPage(data.previous);
                 setPokemonCount(data.count);
-                const pokearray: Array<poketype> = results.map((pokemon: pokedata) => (
+                const pokearray: Array<Poketype> = results.map((pokemon: Pokedata) => (
                     //"https://pokeapi.co/api/v2/pokemon/26/"
                     {
                         id: pokemon.url.substring(34, pokemon.url.length - 1),
@@ -129,7 +116,9 @@ const Pokedex: FunctionComponent<componentProps> = ({ match }) => {
                     }}>Next</Button>
                     <Typography style={{ whiteSpace: "pre", color: "black", fontWeight: 800 }}>          Cards displayed:    </Typography>
 
-                    <TextField id="outlined-basic" placeholder="(default: 54)" variant="outlined" error={(isNaN(Number(textFieldData)))} onKeyPress={
+                    <TextField id="outlined-basic" placeholder="(default: 54)" variant="outlined" error={(isNaN(Number(textFieldData)))} 
+                    helperText={"Numbers only. (0 < n < " + pokemonCount}
+                    onKeyPress={
                         params => {
                             if (!isNaN(Number(textFieldInput))) {
                                 if (params.key === "Enter") {
@@ -162,7 +151,9 @@ const Pokedex: FunctionComponent<componentProps> = ({ match }) => {
                 <Toolbar style={{ marginLeft: "auto" }}>
                     <Typography style={{ whiteSpace: "pre", color: "black", fontWeight: 800 }}>          Cards displayed:    </Typography>
 
-                    <TextField id="outlined-basic" placeholder="(default: 54)" variant="outlined" error={(isNaN(Number(textFieldData)))} onKeyPress={
+                    <TextField id="outlined-basic" placeholder="(default: 54)" variant="outlined" error={(isNaN(Number(textFieldData)))} 
+                    helperText={"Numbers only. (0 < n < " + pokemonCount}
+                    onKeyPress={
                         params => {
                             if (!isNaN(Number(textFieldInput))) {
                                 if (params.key === "Enter") {

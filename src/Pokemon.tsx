@@ -1,103 +1,20 @@
-import React from 'react';
-import { useState } from 'react';
-import { FunctionComponent } from 'react';
-import { RouteComponentProps, useHistory } from 'react-router-dom';
-
-import {
-    BrowserRouter as Router,
-    Route,
-    Link,
-    match
-} from 'react-router-dom';
-import { AppBar, Button, CircularProgress, Typography } from '@material-ui/core';
+import React, { useState, FunctionComponent, useEffect } from 'react';
+import { useHistory } from 'react-router-dom';
+import { AppBar, Button, CircularProgress, Toolbar } from '@material-ui/core';
 import PokeCardDetailed from './PokeCardDetailed';
-import { useEffect } from 'react';
 import axios from 'axios';
-import { Toolbar } from '@material-ui/core';
+import { stringify } from 'querystring';
+
 
 interface componentProps {
     match: {
         params: {
             pokemonId: string,
+            pageId: string,
         }
     }
 }
 
-interface pokedata {
-    name: string,
-    url: string,
-};
-
-
-
-
-interface movedata {
-    move: {
-        name: string,
-        url: string,
-    },
-};
-
-interface typedata {
-    type: {
-        name: string
-    }
-};
-
-
-interface poketype {
-    id: string,
-    name: string,
-    abilities: [{ name: string, url: string }],
-    sprites: string,
-    types: [{ name: string }],
-    stats: [{
-        name: string,
-        effort: string,
-        value: string
-    }],
-    evolutions: Array<{
-        name: string,
-        url: string,
-        trigger: string,
-        held_item: {
-            name: string,
-            url: string,
-        },
-        min_level: string,
-    }>,
-    moves: [{ name: string }]
-}
-
-
-interface species {
-    name: string,
-    url: string,
-    min_level: string,
-    trigger: string,
-    held_item: {
-        name: string,
-        url: string,
-    },
-}
-
-
-interface evolutionChainType {
-    evolution_details: Array<{
-        trigger: { name: string, url: string },
-        min_level: string,
-        held_item: {
-            name: string,
-            url: string,
-        }
-    }>,
-    evolves_to: Array<evolutionChainType>,
-    is_baby: boolean,
-    species: {
-        name: string,
-        url: string,
-    }
-}
 
 interface PokemonPartialMain {
     id: string,
@@ -134,10 +51,7 @@ interface DefaultEvolution {
     sprite: string,
 }
 
-let abilitiesDone = false;
-
 const Pokemon: FunctionComponent<componentProps> = ({ match }) => {
-
 
     const history = useHistory();
     const [detailedPokemonDataMain, setDetailedPokemonDataMain] = useState<PokemonPartialMain>();
@@ -339,31 +253,54 @@ const Pokemon: FunctionComponent<componentProps> = ({ match }) => {
 
     useEffect(() => {
         if (detailedPokemonDataMain == undefined) { } else {
-            let forEachFinish = 0;
             console.log("fourth useEffect triggered! (dependent on the second one)");
             detailedPokemonDataMain?.abilities.forEach((item: { name: string, url: string }) => {
                 axios.get(`${item.url}`).then(response => {
                     const { data } = response;
+                    if (data.effect_entries.length != 0 ) {
+                    data.effect_entries.forEach((subArray: {language: {name: string,}, short_effect: string,}) => {
+                        if (subArray.language.name == "en") {
+                            setDetailedPokemonDataAbilities(previousAbilities => {
+                                return [...previousAbilities,
+                                {
+                                    name: item.name,
+                                    url: subArray.short_effect,
+                                }
+                                ]
+                            })
+
+                        }
+                    });
+                } else if (data.flavor_text_entries.length != 0) {
+                    console.log("debugging: ", data.flavor_text_entries[0].flavor_text)
                     setDetailedPokemonDataAbilities(previousAbilities => {
                         return [...previousAbilities,
                         {
                             name: item.name,
-                            url: data.effect_entries[1].short_effect,
+                            url: data.flavor_text_entries[0].flavor_text,
                         }
                         ]
                     })
+                } else {
+                    setDetailedPokemonDataAbilities(previousAbilities => {
+                        return [...previousAbilities,
+                        {
+                            name: item.name,
+                            url: "description not found :(",
+                        }
+                        ]
+                    })
+                };
 
                 }).catch(error => {
                     console.log("Getting an error in the fourth useEffect: ", error);
                 });
-                forEachFinish++;
 
-                if (forEachFinish === detailedPokemonDataMain?.abilities.length) {
-                    abilitiesDone = true;
-                };
             });
         };
     }, [detailedPokemonDataMain]);
+
+
 
 
     return (
@@ -376,12 +313,13 @@ const Pokemon: FunctionComponent<componentProps> = ({ match }) => {
 
                 </Toolbar>
             </AppBar>
-            {(abilitiesDone && detailedPokemonDataMain != undefined && defaultEvolutionExpanded != undefined && detailedPokemonDataEvolution.length != 0 && detailedPokemonDataAbilities.length != 0) ? (
+            {(detailedPokemonDataMain != undefined && defaultEvolutionExpanded != undefined && detailedPokemonDataEvolution.length != 0 && detailedPokemonDataAbilities.length != 0) ? (
 
                 <div>
 
                     {
                         <PokeCardDetailed
+                            url_history={match.params.pageId}
                             id={detailedPokemonDataMain.id}
                             name={detailedPokemonDataMain.name}
                             abilities={detailedPokemonDataAbilities}
@@ -397,9 +335,9 @@ const Pokemon: FunctionComponent<componentProps> = ({ match }) => {
             ) : (
                     <CircularProgress></CircularProgress>
                 )}
-                            <AppBar position='static' style={{ background: '#5f72ea' }}>
+            <AppBar position='static' style={{ background: '#5f72ea' }}>
                 <Toolbar>
-                    <Button style={{marginLeft: "auto"}} variant="contained" size="large" onClick={() => {
+                    <Button style={{ marginLeft: "auto" }} variant="contained" size="large" onClick={() => {
                         history.goBack();
                     }}>Back</Button>
 

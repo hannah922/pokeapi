@@ -1,6 +1,5 @@
 import React from 'react';
-import { Grid, Card, CardContent, CardMedia, makeStyles, Typography, Button, Divider, createMuiTheme, ThemeProvider, createStyles } from '@material-ui/core';
-import { Route, Router, Switch } from 'react-router-dom';
+import { Grid, Card, CardContent, CardMedia, makeStyles, Typography,} from '@material-ui/core';
 import { useHistory } from "react-router-dom";
 
 interface PokeCardProps {
