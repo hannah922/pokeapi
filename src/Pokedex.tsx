@@ -92,8 +92,8 @@ const Pokedex: FunctionComponent<componentProps> = ({ match }) => {
     const isFirstPage = (prevPage == null);
     const isLastPage = (nextPage == null);
     const pagesList: Array<number> = []
-    for (let i = 0; i < (Math.ceil((Number(pokemonCount!) / pokemonLimit))); i++ ) {
-        pagesList.push(1+i);
+    for (let i = 0; i < (Math.ceil((Number(pokemonCount!) / pokemonLimit))); i++) {
+        pagesList.push(1 + i);
     };
 
 
@@ -109,7 +109,7 @@ const Pokedex: FunctionComponent<componentProps> = ({ match }) => {
                         setThisDoesNothing(`${(Number(match.params.pageId) - 1)}`);
                     }}>Prev</Button>
                     <Typography style={{ whiteSpace: "pre", color: "black", fontWeight: 800 }}>    Page:     </Typography>
-                    <Select native value={Number(match.params.pageId)} onClick={(event: React.MouseEvent<HTMLInputElement>) =>{ 
+                    <Select native value={Number(match.params.pageId)} onClick={(event: React.MouseEvent<HTMLInputElement>) => {
                         const e = event.target as HTMLInputElement;
                         history.push(
                             {
@@ -118,7 +118,7 @@ const Pokedex: FunctionComponent<componentProps> = ({ match }) => {
                         )
                         setThisDoesNothing(`${e.value}`);
                     }} >
-                        {pagesList.map((item: number) => <option style={{fontWeight: 800}}>{item}</option>)}
+                        {pagesList.map((item: number) => <option style={{ fontWeight: 800 }}>{item}</option>)}
                     </Select>
                     <Button variant="contained" size="large" disabled={isLastPage} onClick={() => {
                         history.push(
@@ -159,7 +159,49 @@ const Pokedex: FunctionComponent<componentProps> = ({ match }) => {
                     )
             }
             <AppBar position='static' style={{ background: '#5f72ea' }}>
-                <Toolbar>
+                <Toolbar style={{ marginLeft: "auto" }}>
+                    <Typography style={{ whiteSpace: "pre", color: "black", fontWeight: 800 }}>          Cards displayed:    </Typography>
+
+                    <TextField id="outlined-basic" placeholder="(default: 54)" variant="outlined" error={(isNaN(Number(textFieldData)))} onKeyPress={
+                        params => {
+                            if (!isNaN(Number(textFieldInput))) {
+                                if (params.key === "Enter") {
+                                    setPokemonLimit(Number(textFieldInput));
+
+                                }
+                            }
+                        }} onChange={(event: ChangeEvent<HTMLInputElement>) => {
+                            textFieldInput = event?.target.value;
+                            setTextFieldData(event?.target.value);
+                        }} />
+
+                    <Button variant="contained" size="large" disabled={isFirstPage} onClick={() => {
+                        history.push(
+                            {
+                                pathname: `/${(Number(match.params.pageId) - 1)}`
+                            })
+                        setThisDoesNothing(`${(Number(match.params.pageId) - 1)}`);
+                    }}>Prev</Button>
+                    <Typography style={{ whiteSpace: "pre", color: "black", fontWeight: 800 }}>    Page:     </Typography>
+                    <Select native value={Number(match.params.pageId)} onClick={(event: React.MouseEvent<HTMLInputElement>) => {
+                        const e = event.target as HTMLInputElement;
+                        history.push(
+                            {
+                                pathname: `${e.value}`
+                            }
+                        )
+                        setThisDoesNothing(`${e.value}`);
+                    }} >
+                        {pagesList.map((item: number) => <option style={{ fontWeight: 800 }}>{item}</option>)}
+                    </Select>
+                    <Button variant="contained" size="large" disabled={isLastPage} onClick={() => {
+                        history.push(
+                            {
+                                pathname: `/${(Number(match.params.pageId) + 1)}`
+                            })
+                        setThisDoesNothing(`${(Number(match.params.pageId) + 1)}`);
+                    }}>Next</Button>
+
 
                 </Toolbar>
             </AppBar>

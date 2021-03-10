@@ -392,12 +392,19 @@ const Pokemon: FunctionComponent<componentProps> = ({ match }) => {
                             default_evolution={defaultEvolutionExpanded}
                         />
                     }
-                    <div>{`evolutions in state: ${detailedPokemonDataEvolution.length}`}</div>
                 </div>
 
             ) : (
                     <CircularProgress></CircularProgress>
                 )}
+                            <AppBar position='static' style={{ background: '#5f72ea' }}>
+                <Toolbar>
+                    <Button style={{marginLeft: "auto"}} variant="contained" size="large" onClick={() => {
+                        history.goBack();
+                    }}>Back</Button>
+
+                </Toolbar>
+            </AppBar>
 
 
         </>

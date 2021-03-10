@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Grid, Card, CardContent, CardMedia, makeStyles, Typography, Button, Avatar, Box, Divider, List, Table, TableRow, TableCell, withStyles } from '@material-ui/core';
+import { Grid, Card, CardContent, CardMedia, makeStyles, Typography, Button, Avatar, Box, Divider, List, Table, TableRow, TableCell, withStyles, Paper, Container as div } from '@material-ui/core';
 import { Route, Router, Switch } from 'react-router-dom';
 import { useHistory } from "react-router-dom";
 import { ListItem } from '@material-ui/core';
@@ -53,11 +53,18 @@ const Styles = makeStyles({
         textAlign: "left",
         fontStyle: "italic",
     },
-    box: {
+    paper: {
+        // margin: "auto",
+        // borderRight: "5px solid black",
+        // backgroundColor: "cyan",
+        // width: "700px",
+        borderRight: '0.5em solid black', 
+        borderBottom: '0.3em solid black',
+        padding: '0.5em',
+        borderRadius: 80,
+        width: 700,
         margin: "auto",
-        borderRight: "5px solid black",
-        backgroundColor: "cyan",
-        width: "700px",
+        backgroundColor: "#E0E0E0",
     },
     table: {
         borderTopWidth: 3,
@@ -432,7 +439,7 @@ const PokeCardDetailed = ({ id, name, abilities, sprite, types, stats, evolution
     return (
         <>
 
-            <Box className={classes.box}>
+            <Paper className={classes.paper}>
 
 
                 <Typography className={classes.typography_id} variant="h3" style={{ fontWeight: 900 }}>
@@ -530,7 +537,8 @@ const PokeCardDetailed = ({ id, name, abilities, sprite, types, stats, evolution
                     disableExtendRowFullWidth={false}
                     rowHeight={150}
                 ></DataGrid>
-            </Box>
+                <div style={{height: "40px"}}></div>
+            </Paper>
 
 
         </>

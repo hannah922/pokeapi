@@ -1,4 +1,9 @@
-add navigation
 revisit naming conventions: interface with capital, constants with lower
 if evolution chain is empty program gets stuck: needs fixing
 add check to abilities description language
+
+
+
+fix back button with non default pagesize
+
+fix styles
