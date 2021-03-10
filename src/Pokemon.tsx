@@ -1,7 +1,7 @@
 import React from 'react';
 import { useState } from 'react';
 import { FunctionComponent } from 'react';
-import { RouteComponentProps } from 'react-router-dom';
+import { RouteComponentProps, useHistory } from 'react-router-dom';
 
 import {
     BrowserRouter as Router,
@@ -9,10 +9,11 @@ import {
     Link,
     match
 } from 'react-router-dom';
-import { CircularProgress, Typography } from '@material-ui/core';
+import { AppBar, Button, CircularProgress, Typography } from '@material-ui/core';
 import PokeCardDetailed from './PokeCardDetailed';
 import { useEffect } from 'react';
 import axios from 'axios';
+import { Toolbar } from '@material-ui/core';
 
 interface componentProps {
     match: {
@@ -137,6 +138,8 @@ let abilitiesDone = false;
 
 const Pokemon: FunctionComponent<componentProps> = ({ match }) => {
 
+
+    const history = useHistory();
     const [detailedPokemonDataMain, setDetailedPokemonDataMain] = useState<PokemonPartialMain>();
     const [urlBridgeEvolution, setUrlBridgeEvolution] = useState<string>();
     const [defaultEvolution, setDefaultEvolution] = useState<string>();
@@ -201,178 +204,194 @@ const Pokemon: FunctionComponent<componentProps> = ({ match }) => {
 
 
     useEffect(() => {
-        if(detailedPokemonDataMain == undefined) {} else {
-        console.log("second useEffect triggered! (dependent on the first one)");
-        axios.get(`${detailedPokemonDataMain?.species_url}`).then(response => {
-            const { data } = response;
-            setUrlBridgeEvolution(data.evolution_chain.url);
-        }).catch(error => {
-            console.log("Getting an error in the second useEffect: ", error);
-        }); };
+        if (detailedPokemonDataMain == undefined) { } else {
+            console.log("second useEffect triggered! (dependent on the first one)");
+            axios.get(`${detailedPokemonDataMain?.species_url}`).then(response => {
+                const { data } = response;
+                setUrlBridgeEvolution(data.evolution_chain.url);
+            }).catch(error => {
+                console.log("Getting an error in the second useEffect: ", error);
+            });
+        };
     }, [detailedPokemonDataMain]);
 
     useEffect(() => {
-        if(urlBridgeEvolution == undefined) {} else {
-        axios.get(`${urlBridgeEvolution}`).then(response => {
-            const { data } = response;
-            setDefaultEvolution(`${data.chain.species.name}`);
-        }).catch(error => {
-            console.log("Error in an axios: ", error);
-        }); };
+        if (urlBridgeEvolution == undefined) { } else {
+            axios.get(`${urlBridgeEvolution}`).then(response => {
+                const { data } = response;
+                setDefaultEvolution(`${data.chain.species.name}`);
+            }).catch(error => {
+                console.log("Error in an axios: ", error);
+            });
+        };
     }, [urlBridgeEvolution]);
 
     useEffect(() => {
-        if (defaultEvolution == undefined) {} else {
-        axios.get(`https://pokeapi.co/api/v2/pokemon/${defaultEvolution}`).then(response => {
-            const { data } = response;
-            setDefaultEvolutionExpanded({
-                name: data.name,
-                id: data.id,
-                sprite: data.sprites.front_default,
+        if (defaultEvolution == undefined) { } else {
+            axios.get(`https://pokeapi.co/api/v2/pokemon/${defaultEvolution}`).then(response => {
+                const { data } = response;
+                setDefaultEvolutionExpanded({
+                    name: data.name,
+                    id: data.id,
+                    sprite: data.sprites.front_default,
+                });
+            }).catch(error => {
+                console.log("Error in an axios: ", error);
             });
-        }).catch(error => {
-            console.log("Error in an axios: ", error);
-        }); };
+        };
     }, [defaultEvolution]);
 
 
 
     useEffect(() => {
-        if (urlBridgeEvolution == undefined) {} else {
-        console.log("third useEffect triggered! (dependent on the second one)");
-        axios.get(`${urlBridgeEvolution}`).then(response => {
-            const { data } = response;
-            const { chain } = data;
+        if (urlBridgeEvolution == undefined) { } else {
+            console.log("third useEffect triggered! (dependent on the second one)");
+            axios.get(`${urlBridgeEvolution}`).then(response => {
+                const { data } = response;
+                const { chain } = data;
 
 
 
-            function getEvolutionDetails(chain: any) {
-                const isLastPokemonInChain = ((chain.evolves_to).length === 0);
-                const { evolves_to } = chain;
-                for (let i = 0; i < (evolves_to).length; i++) {
-                    //ITERATING THROUGH THE EVOLUTION_DETAILS FIELD
-                    const temporaryArray: { name: string, url: string }[] = [];
-                    let j = 0;
-                    Object.values(evolves_to[i].evolution_details[0]).forEach(value => {
-                        if (value != null && value != "false" && value != "" && i != 16 && i != 9) {
-                            //console.log(j, " key was not found null: ", value);
-                            switch (j) {
-                                case 0: {
-                                    //1st element is gender
-                                    switch (value) {
-                                        case "0": {
-                                            temporaryArray.push({ name: "female", url: "NULL_gender" });
-                                            break;
+                function getEvolutionDetails(chain: any) {
+                    const isLastPokemonInChain = ((chain.evolves_to).length === 0);
+                    const { evolves_to } = chain;
+                    for (let i = 0; i < (evolves_to).length; i++) {
+                        //ITERATING THROUGH THE EVOLUTION_DETAILS FIELD
+                        const temporaryArray: { name: string, url: string }[] = [];
+                        let j = 0;
+                        Object.values(evolves_to[i].evolution_details[0]).forEach(value => {
+                            if (value != null && value != "false" && value != "" && i != 16 && i != 9) {
+                                //console.log(j, " key was not found null: ", value);
+                                switch (j) {
+                                    case 0: {
+                                        //1st element is gender
+                                        switch (value) {
+                                            case "0": {
+                                                temporaryArray.push({ name: "female", url: "NULL_gender" });
+                                                break;
+                                            }
+                                            case "1": {
+                                                temporaryArray.push({ name: "male", url: "NULL_gender" });
+                                                break;
+                                            }
+                                            case "2": {
+                                                temporaryArray.push({ name: "nongendered", url: "NULL_gender" });
+                                                break;
+                                            }
+                                            default: { break; }
                                         }
-                                        case "1": {
-                                            temporaryArray.push({ name: "male", url: "NULL_gender" });
-                                            break;
-                                        }
-                                        case "2": {
-                                            temporaryArray.push({ name: "nongendered", url: "NULL_gender" });
-                                            break;
-                                        }
-                                        default: { break; }
+                                        break;
                                     }
-                                    break;
-                                }
-                                case 1:
-                                case 2: {
-                                    //the 2nd and 3rd element are either an item that must be held, or an item that is required
-                                    temporaryArray.push(value as { name: string, url: string });
-                                    break;
-                                }
-                                case 3: {
-                                    //the 4th element is known_move
-                                    temporaryArray.push({ name: (value as { name: string, url: string }).name, url: "NULL_knownmove" });
-                                    break;
-                                }
-                                case 5: {
-                                    //the 6th element is location
-                                    temporaryArray.push({ name: (value as { name: string, url: string }).name, url: "NULL_location" });
-                                    break;
-                                }
-                                default: {
-                                    //well we very conveniently just ignore all other cases.. so
-                                    break;
-                                }
-                            };
+                                    case 1:
+                                    case 2: {
+                                        //the 2nd and 3rd element are either an item that must be held, or an item that is required
+                                        temporaryArray.push(value as { name: string, url: string });
+                                        break;
+                                    }
+                                    case 3: {
+                                        //the 4th element is known_move
+                                        temporaryArray.push({ name: (value as { name: string, url: string }).name, url: "NULL_knownmove" });
+                                        break;
+                                    }
+                                    case 5: {
+                                        //the 6th element is location
+                                        temporaryArray.push({ name: (value as { name: string, url: string }).name, url: "NULL_location" });
+                                        break;
+                                    }
+                                    default: {
+                                        //well we very conveniently just ignore all other cases.. so
+                                        break;
+                                    }
+                                };
+                            }
+                            j++;
+                        });
+
+                        setDetailedPokemonDataEvolution(previousState => {
+                            return [...previousState,
+                            {
+                                name: evolves_to[i].species.name,
+                                min_level: (evolves_to[i].evolution_details[0].min_level == null) ? "-" : evolves_to[i].evolution_details[0].min_level,
+                                trigger: evolves_to[i].evolution_details[0].trigger.name,
+                                special: temporaryArray,
+                            }
+                            ]
+
+                        });
+                        if (!isLastPokemonInChain) {
+                            getEvolutionDetails(evolves_to[i]);
+
                         }
-                        j++;
-                    });
-
-                    setDetailedPokemonDataEvolution(previousState => {
-                        return [...previousState,
-                        {
-                            name: evolves_to[i].species.name,
-                            min_level: (evolves_to[i].evolution_details[0].min_level == null) ? "-" : evolves_to[i].evolution_details[0].min_level,
-                            trigger: evolves_to[i].evolution_details[0].trigger.name,
-                            special: temporaryArray,
-                        }
-                        ]
-
-                    });
-                    if (!isLastPokemonInChain) {
-                        getEvolutionDetails(evolves_to[i]);
-
                     }
+
+                };
+                if ((data.chain.evolves_to).length != 0) {
+                    getEvolutionDetails(data.chain);
                 }
 
-            };
-            if ((data.chain.evolves_to).length != 0) {
-                getEvolutionDetails(data.chain);
+            }).catch(error => {
+                console.log("Getting an error in the third useEffect: ", error)
             }
-
-        }).catch(error => {
-            console.log("Getting an error in the third useEffect: ", error)
-        }
-        ); };
+            );
+        };
 
     }, [urlBridgeEvolution]);
 
     useEffect(() => {
-        if (detailedPokemonDataMain == undefined) {} else {
-        let forEachFinish = 0;
-        console.log("fourth useEffect triggered! (dependent on the second one)");
-        detailedPokemonDataMain?.abilities.forEach((item: { name: string, url: string }) => {
-            axios.get(`${item.url}`).then(response => {
-                const { data } = response;
-                setDetailedPokemonDataAbilities(previousAbilities => {
-                    return [...previousAbilities,
-                    {
-                        name: item.name,
-                        url: data.effect_entries[1].short_effect,
-                    }
-                    ]
-                })
+        if (detailedPokemonDataMain == undefined) { } else {
+            let forEachFinish = 0;
+            console.log("fourth useEffect triggered! (dependent on the second one)");
+            detailedPokemonDataMain?.abilities.forEach((item: { name: string, url: string }) => {
+                axios.get(`${item.url}`).then(response => {
+                    const { data } = response;
+                    setDetailedPokemonDataAbilities(previousAbilities => {
+                        return [...previousAbilities,
+                        {
+                            name: item.name,
+                            url: data.effect_entries[1].short_effect,
+                        }
+                        ]
+                    })
 
-            }).catch(error => {
-                console.log("Getting an error in the fourth useEffect: ", error);
+                }).catch(error => {
+                    console.log("Getting an error in the fourth useEffect: ", error);
+                });
+                forEachFinish++;
+
+                if (forEachFinish === detailedPokemonDataMain?.abilities.length) {
+                    abilitiesDone = true;
+                };
             });
-            forEachFinish++;
-
-            if (forEachFinish === detailedPokemonDataMain?.abilities.length) {
-                abilitiesDone = true;
-            };
-        }); };
+        };
     }, [detailedPokemonDataMain]);
 
 
     return (
         <>
+            <AppBar position='static' style={{ background: '#5f72ea' }}>
+                <Toolbar>
+                    <Button variant="contained" size="large" onClick={() => {
+                        history.goBack();
+                    }}>Back</Button>
+
+                </Toolbar>
+            </AppBar>
             {(abilitiesDone && detailedPokemonDataMain != undefined && defaultEvolutionExpanded != undefined && detailedPokemonDataEvolution.length != 0 && detailedPokemonDataAbilities.length != 0) ? (
 
                 <div>
-                    <PokeCardDetailed
-                        id={detailedPokemonDataMain.id}
-                        name={detailedPokemonDataMain.name}
-                        abilities={detailedPokemonDataAbilities}
-                        stats={detailedPokemonDataMain.stats}
-                        sprite={detailedPokemonDataMain.sprite}
-                        types={detailedPokemonDataMain.types}
-                        evolutions={detailedPokemonDataEvolution}
-                        default_evolution={defaultEvolutionExpanded}
-                    />
+
+                    {
+                        <PokeCardDetailed
+                            id={detailedPokemonDataMain.id}
+                            name={detailedPokemonDataMain.name}
+                            abilities={detailedPokemonDataAbilities}
+                            stats={detailedPokemonDataMain.stats}
+                            sprite={detailedPokemonDataMain.sprite}
+                            types={detailedPokemonDataMain.types}
+                            evolutions={detailedPokemonDataEvolution}
+                            default_evolution={defaultEvolutionExpanded}
+                        />
+                    }
                     <div>{`evolutions in state: ${detailedPokemonDataEvolution.length}`}</div>
                 </div>
 

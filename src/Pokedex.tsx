@@ -1,4 +1,4 @@
-import React, { ChangeEvent, useEffect, useState } from 'react';
+import React, { ChangeEvent, MouseEventHandler, useEffect, useState } from 'react';
 import { FunctionComponent } from 'react';
 import { RouteComponentProps, useHistory } from 'react-router-dom';
 import { AppBar, Button, CircularProgress, createStyles, Input, makeStyles, Select, TextField, Typography } from '@material-ui/core';
@@ -99,7 +99,7 @@ const Pokedex: FunctionComponent<componentProps> = ({ match }) => {
 
     return (
         <>
-            <AppBar position='static'>
+            <AppBar position='static' style={{ background: '#5f72ea' }}>
                 <Toolbar>
                     <Button variant="contained" size="large" disabled={isFirstPage} onClick={() => {
                         history.push(
@@ -108,9 +108,17 @@ const Pokedex: FunctionComponent<componentProps> = ({ match }) => {
                             })
                         setThisDoesNothing(`${(Number(match.params.pageId) - 1)}`);
                     }}>Prev</Button>
-                    <Typography style={{ whiteSpace: "pre", color: "black", fontWeight: 800 }}>    Page: {match.params.pageId}    </Typography>
-                    <Select native value={Number(match.params.pageId)} >
-                        {pagesList.map((item: number) => <option>{item}</option>)}
+                    <Typography style={{ whiteSpace: "pre", color: "black", fontWeight: 800 }}>    Page:     </Typography>
+                    <Select native value={Number(match.params.pageId)} onClick={(event: React.MouseEvent<HTMLInputElement>) =>{ 
+                        const e = event.target as HTMLInputElement;
+                        history.push(
+                            {
+                                pathname: `${e.value}`
+                            }
+                        )
+                        setThisDoesNothing(`${e.value}`);
+                    }} >
+                        {pagesList.map((item: number) => <option style={{fontWeight: 800}}>{item}</option>)}
                     </Select>
                     <Button variant="contained" size="large" disabled={isLastPage} onClick={() => {
                         history.push(
@@ -150,7 +158,7 @@ const Pokedex: FunctionComponent<componentProps> = ({ match }) => {
                         <CircularProgress></CircularProgress>
                     )
             }
-            <AppBar position='static'>
+            <AppBar position='static' style={{ background: '#5f72ea' }}>
                 <Toolbar>
 
                 </Toolbar>
