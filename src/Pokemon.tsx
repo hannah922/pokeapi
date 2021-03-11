@@ -1,5 +1,5 @@
 import React, { useState, FunctionComponent, useEffect } from 'react';
-import { useHistory } from 'react-router-dom';
+import { RouteComponentProps, useHistory, useLocation } from 'react-router-dom';
 import { AppBar, Button, CircularProgress, Toolbar } from '@material-ui/core';
 import PokeCardDetailed from './PokeCardDetailed';
 import axios from 'axios';
@@ -264,6 +264,8 @@ const Pokemon: FunctionComponent<componentProps> = ({ match }) => {
 
     }, [urlBridgeEvolution]);
 
+
+
     useEffect(() => {
         if (detailedPokemonDataMain == undefined) { } else {
             console.log("fourth useEffect triggered! (dependent on the second one)");
@@ -315,14 +317,17 @@ const Pokemon: FunctionComponent<componentProps> = ({ match }) => {
 
 
 
-
     return (
         <>
             <AppBar position='static' style={{ background: '#5f72ea' }}>
                 <Toolbar>
                     <Button variant="contained" size="large" onClick={() => {
-                        history.goBack();
-                    }}>Back</Button>
+                        history.push({
+                            pathname: `/${match.params.pageId}`,
+                            search: `?${(history.location.search).substring(1)}`,
+                        })
+                        }
+                    }>Back</Button>
 
                 </Toolbar>
             </AppBar>

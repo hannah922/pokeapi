@@ -1,10 +1,5 @@
 move interfaces to a different file??
-if evolution chain is empty program gets stuck: needs fixing
-
-fix back button with non default pagesize!!! fix back button in general
 
 fix styles??
 
 better commenting!!
-
-error handling in url: undefined

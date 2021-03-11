@@ -8,11 +8,11 @@ const App = (): React.ReactElement =>  {
   return (
     <Switch>
       <Route exact path="/">
-    <Redirect to="/1" />
+    <Redirect to="/1?54" />
 </Route>
-      <Route exact path="/:pageId" render={(props) => <Pokedex {...props} />} />
+      <Route exact path="/:pageId" render={(props) => <Pokedex {...props} />}  />
     <Route
-      exact path="/:pageId/:pokemonId" render={(props) => <Pokemon {...props} />}
+      path="/:pageId/:pokemonId" render={(props) => <Pokemon {...props} />}
     />
     </Switch>
   );

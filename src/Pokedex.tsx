@@ -42,7 +42,7 @@ const Pokedex: FunctionComponent<componentProps> = ({ match }) => {
     const history = useHistory();
     const classes = Styles();
 
-    const [pokemonLimit, setPokemonLimit] = useState<number>(54);
+    const [pokemonLimit, setPokemonLimit] = useState<number>((history.location.search != undefined) ? Number(history.location.search.substring(1)) : 54);
     const [textFieldData, setTextFieldData] = useState<string>("54");
     const [thisDoesNothing, setThisDoesNothing] = useState<string>("");
     const [newPokemonData, setNewPokemonData] = useState<Array<Poketype>>([]);
@@ -91,7 +91,8 @@ const Pokedex: FunctionComponent<componentProps> = ({ match }) => {
                     <Button variant="contained" size="large" disabled={isFirstPage} onClick={() => {
                         history.push(
                             {
-                                pathname: `/${(Number(match.params.pageId) - 1)}`
+                                pathname: `/${(Number(match.params.pageId) - 1)}`,
+                                search: `?${pokemonLimit}`,
                             })
                         setThisDoesNothing(`${(Number(match.params.pageId) - 1)}`);
                     }}>Prev</Button>
@@ -100,7 +101,8 @@ const Pokedex: FunctionComponent<componentProps> = ({ match }) => {
                         const e = event.target as HTMLInputElement;
                         history.push(
                             {
-                                pathname: `${e.value}`
+                                pathname: `${e.value}`,
+                                search: `?${pokemonLimit}`,
                             }
                         )
                         setThisDoesNothing(`${e.value}`);
@@ -110,7 +112,8 @@ const Pokedex: FunctionComponent<componentProps> = ({ match }) => {
                     <Button variant="contained" size="large" disabled={isLastPage} onClick={() => {
                         history.push(
                             {
-                                pathname: `/${(Number(match.params.pageId) + 1)}`
+                                pathname: `/${(Number(match.params.pageId) + 1)}`,
+                                search: `?${pokemonLimit}`,
                             })
                         setThisDoesNothing(`${(Number(match.params.pageId) + 1)}`);
                     }}>Next</Button>
@@ -139,7 +142,8 @@ const Pokedex: FunctionComponent<componentProps> = ({ match }) => {
                         {/* {BetterObject.keys(PokemonData).map(
             (pokemonId) => PokeCard(pokemonId))} */}
                         {newPokemonData.map(pokemon => (
-                            <PokeCard id={pokemon.id} name={pokemon.name} sprite={pokemon.sprite} pokedexPageId={match.params.pageId} />
+                            <PokeCard id={pokemon.id} name={pokemon.name} sprite={pokemon.sprite} pokedexPageId={match.params.pageId}
+                            pokemonLimit={`${pokemonLimit}`} />
                         ))}
 
                     </Grid>
@@ -169,7 +173,8 @@ const Pokedex: FunctionComponent<componentProps> = ({ match }) => {
                     <Button variant="contained" size="large" disabled={isFirstPage} onClick={() => {
                         history.push(
                             {
-                                pathname: `/${(Number(match.params.pageId) - 1)}`
+                                pathname: `/${(Number(match.params.pageId) - 1)}`,
+                                search: `?${pokemonLimit}`,
                             })
                         setThisDoesNothing(`${(Number(match.params.pageId) - 1)}`);
                     }}>Prev</Button>
@@ -178,7 +183,8 @@ const Pokedex: FunctionComponent<componentProps> = ({ match }) => {
                         const e = event.target as HTMLInputElement;
                         history.push(
                             {
-                                pathname: `${e.value}`
+                                pathname: `${e.value}`,
+                                search: `?${pokemonLimit}`,
                             }
                         )
                         setThisDoesNothing(`${e.value}`);
@@ -188,7 +194,8 @@ const Pokedex: FunctionComponent<componentProps> = ({ match }) => {
                     <Button variant="contained" size="large" disabled={isLastPage} onClick={() => {
                         history.push(
                             {
-                                pathname: `/${(Number(match.params.pageId) + 1)}`
+                                pathname: `/${(Number(match.params.pageId) + 1)}`,
+                                search: `?${pokemonLimit}`,
                             })
                         setThisDoesNothing(`${(Number(match.params.pageId) + 1)}`);
                     }}>Next</Button>
