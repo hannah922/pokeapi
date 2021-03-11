@@ -241,7 +241,20 @@ const Pokemon: FunctionComponent<componentProps> = ({ match }) => {
                 };
                 if ((data.chain.evolves_to).length != 0) {
                     getEvolutionDetails(data.chain);
-                }
+                } else {
+                    setDetailedPokemonDataEvolution(previousState => {
+                        return [...previousState,
+                        {
+                            name: "No evolutions found!",
+                            min_level: "-",
+                            trigger: "-",
+                            special: [{name: "-", url: "-"}],
+                        }
+                        ]
+
+                    });
+
+                };
 
             }).catch(error => {
                 console.log("Getting an error in the third useEffect: ", error)
