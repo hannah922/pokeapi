@@ -3,57 +3,15 @@ import { RouteComponentProps, useHistory, useLocation } from 'react-router-dom';
 import { AppBar, Button, CircularProgress, Toolbar } from '@material-ui/core';
 import PokeCardDetailed from './PokeCardDetailed';
 import axios from 'axios';
-import { stringify } from 'querystring';
+import { componentPropsPokemon, PokemonPartialMain, PokemonPartialEvolution, PokemonPartialAbilities, DefaultEvolution } from './interfaces'
+import Styles  from './styles';
 
 
-interface componentProps {
-    match: {
-        params: {
-            pokemonId: string,
-            pageId: string,
-        }
-    }
-}
 
-
-interface PokemonPartialMain {
-    id: string,
-    name: string,
-    abilities: [{ name: string, url: string }],
-    sprite: string,
-    types: [{ name: string }],
-    stats: [{
-        name: string,
-        effort: string,
-        value: string
-    }],
-    species_url: string,
-}
-
-interface PokemonPartialEvolution {
-    name: string,
-    trigger: string,
-    special: Array<{
-        name: string,
-        url: string,
-    }>,
-    min_level: string,
-};
-
-interface PokemonPartialAbilities {
-    name: string,
-    url: string,
-};
-
-interface DefaultEvolution {
-    name: string,
-    id: string,
-    sprite: string,
-}
-
-const Pokemon: FunctionComponent<componentProps> = ({ match }) => {
+const Pokemon: FunctionComponent<componentPropsPokemon> = ({ match }) => {
 
     const history = useHistory();
+    const classes = Styles();
     const [detailedPokemonDataMain, setDetailedPokemonDataMain] = useState<PokemonPartialMain>();
     const [urlBridgeEvolution, setUrlBridgeEvolution] = useState<string>();
     const [defaultEvolution, setDefaultEvolution] = useState<string>();
@@ -319,7 +277,7 @@ const Pokemon: FunctionComponent<componentProps> = ({ match }) => {
 
     return (
         <>
-            <AppBar position='static' style={{ background: '#5f72ea' }}>
+            <AppBar position='static' className={classes.appBar}>
                 <Toolbar>
                     <Button variant="contained" size="large" onClick={() => {
                         history.push({
@@ -353,7 +311,7 @@ const Pokemon: FunctionComponent<componentProps> = ({ match }) => {
             ) : (
                     <CircularProgress></CircularProgress>
                 )}
-            <AppBar position='static' style={{ background: '#5f72ea' }}>
+            <AppBar position='static' className={classes.appBar}>
                 <Toolbar>
                     <Button style={{ marginLeft: "auto" }} variant="contained" size="large" onClick={() => {
                         history.goBack();

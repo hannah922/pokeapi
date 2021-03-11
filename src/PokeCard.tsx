@@ -1,37 +1,9 @@
 import React from 'react';
 import { Grid, Card, CardContent, CardMedia, makeStyles, Typography,} from '@material-ui/core';
 import { useHistory } from "react-router-dom";
+import { PokeCardProps } from './interfaces';
+import Styles  from './styles';
 
-interface PokeCardProps {
-    name: string,
-    id: string,
-    sprite: string,
-    pokedexPageId: string,
-    pokemonLimit: string,
-};
-
-
-const Styles = makeStyles({
-    cards: {
-        borderRight: '0.9em solid black', 
-        borderBottom: '0.5em solid black',
-        padding: '0.5em',
-        borderRadius: 20,
-
-    },
-    cardMedia: {
-        margin: "auto",
-    },
-    typography_id: {
-        textAlign: "left",
-        fontStyle: "italic",
-    },
-    typography_name: {
-        fontSize: "28px", //hm this does nothing
-        textAlign: "center",
-        fontWeight: 'bold',  //this also does nothing.. typescript string type issue?
-    },
-});
 
 const toUpperCase = (name: string) => {
     return name.charAt(0).toUpperCase() + name.slice(1);
@@ -48,7 +20,7 @@ const PokeCard = ({ id, name, sprite, pokedexPageId, pokemonLimit}: PokeCardProp
                     pathname: `/${pokedexPageId}/${id}`,
                     search: `?${pokemonLimit}`
                 })} className={classes.cards}>
-                <CardContent className={classes.typography_id}>
+                <CardContent className={classes.typographyCardId}>
                     <Typography variant="h4">
                         {id}
                     </Typography>
@@ -58,7 +30,7 @@ const PokeCard = ({ id, name, sprite, pokedexPageId, pokemonLimit}: PokeCardProp
                     image={sprite}
                     style={{ height: "200px", width: "200px" }}>
                 </CardMedia>
-                <CardContent className={classes.typography_name}>
+                <CardContent className={classes.typographyCardName}>
 
                     <Typography variant="h5" style={{fontWeight: 900, fontSize: "28px"}}>
                         {name && toUpperCase(name)}

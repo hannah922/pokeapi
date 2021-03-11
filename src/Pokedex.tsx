@@ -3,40 +3,13 @@ import { useHistory } from 'react-router-dom';
 import { AppBar, Button, CircularProgress, makeStyles, Select, TextField, Typography, Toolbar, Grid } from '@material-ui/core';
 import PokeCard from './PokeCard';
 import axios from 'axios';
+import { Poketype, componentPropsPokedex, Pokedata } from "./interfaces";
+import Styles  from './styles';
 
-
-interface componentProps {
-    match: {
-        params: {
-            pageId: string,
-        }
-    }
-}
-
-const Styles = makeStyles({
-    root: {
-        paddingTop: "20px",
-        paddingLeft: "50px",
-        paddingRight: "50px",
-    },
-});
-
-
-interface Pokedata {
-    name: string,
-    url: string,
-};
-
-
-interface Poketype {
-    id: string,
-    name: string,
-    sprite: string,
-}
 
 let textFieldInput: string = "54";
 
-const Pokedex: FunctionComponent<componentProps> = ({ match }) => {
+const Pokedex: FunctionComponent<componentPropsPokedex> = ({ match }) => {
 
 
     const history = useHistory();
@@ -86,7 +59,7 @@ const Pokedex: FunctionComponent<componentProps> = ({ match }) => {
 
     return (
         <>
-            <AppBar position='static' style={{ background: '#5f72ea' }}>
+            <AppBar position='static' className={classes.appBar}>
                 <Toolbar>
                     <Button variant="contained" size="large" disabled={isFirstPage} onClick={() => {
                         history.push(
@@ -96,7 +69,7 @@ const Pokedex: FunctionComponent<componentProps> = ({ match }) => {
                             })
                         setThisDoesNothing(`${(Number(match.params.pageId) - 1)}`);
                     }}>Prev</Button>
-                    <Typography style={{ whiteSpace: "pre", color: "black", fontWeight: 800 }}>    Page:     </Typography>
+                    <Typography className={classes.typography} style={{fontWeight: 800 }}>    Page:     </Typography>
                     <Select native value={Number(match.params.pageId)} onClick={(event: React.MouseEvent<HTMLInputElement>) => {
                         const e = event.target as HTMLInputElement;
                         history.push(
@@ -125,7 +98,9 @@ const Pokedex: FunctionComponent<componentProps> = ({ match }) => {
                         params => {
                             if (!isNaN(Number(textFieldInput))) {
                                 if (params.key === "Enter") {
+                                    history.push(`${match.params.pageId}?${pokemonLimit}`);
                                     setPokemonLimit(Number(textFieldInput));
+                                    
 
                                 }
                             }
@@ -151,9 +126,9 @@ const Pokedex: FunctionComponent<componentProps> = ({ match }) => {
                         <CircularProgress></CircularProgress>
                     )
             }
-            <AppBar position='static' style={{ background: '#5f72ea' }}>
-                <Toolbar style={{ marginLeft: "auto" }}>
-                    <Typography style={{ whiteSpace: "pre", color: "black", fontWeight: 800 }}>          Cards displayed:    </Typography>
+            <AppBar position='static' className={classes.appBar}>
+                <Toolbar className={classes.toolBar_bottom}>
+                    <Typography className={classes.typography} style={{ fontWeight: 800 }}>          Cards displayed:    </Typography>
 
                     <TextField id="outlined-basic" placeholder="(default: 54)" variant="outlined" error={(isNaN(Number(textFieldData)))} 
                     helperText={"Numbers only. (0 < n < " + pokemonCount}
@@ -162,6 +137,7 @@ const Pokedex: FunctionComponent<componentProps> = ({ match }) => {
                             if (!isNaN(Number(textFieldInput))) {
                                 if (params.key === "Enter") {
                                     setPokemonLimit(Number(textFieldInput));
+                                    history.push(`${match.params.pageId}?${pokemonLimit}`);
 
                                 }
                             }
