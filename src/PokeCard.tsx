@@ -1,5 +1,5 @@
 import React from 'react';
-import { Grid, Card, CardContent, CardMedia, makeStyles, Typography,} from '@material-ui/core';
+import { Grid, Card, CardContent, CardMedia, Typography,} from '@material-ui/core';
 import { useHistory } from "react-router-dom";
 import { PokeCardProps } from './interfaces';
 import Styles  from './styles';
@@ -9,30 +9,32 @@ const toUpperCase = (name: string) => {
     return name.charAt(0).toUpperCase() + name.slice(1);
 
 };
-
+//component used to display contents of the simple pokecards: ID, name, picture
+//clicking on a card opens a new page containing their detailed description
 const PokeCard = ({ id, name, sprite, pokedexPageId, pokemonLimit}: PokeCardProps) => {
     const history = useHistory();
     const classes = Styles();
     return (
-        <Grid container spacing={0} item xs={12} sm={2}>
-            <Card onClick={() => history.push(
+        <Grid key={"pokemonGrid"} container spacing={0} item xs={12} sm={2}>
+            <Card key={"pokemonCard"} onClick={() => history.push(
                 {
                     pathname: `/${pokedexPageId}/${id}`,
                     search: `?${pokemonLimit}`
                 })} className={classes.cards}>
-                <CardContent className={classes.typographyCardId}>
-                    <Typography variant="h4">
+                <CardContent key={"pokemonCardContentTop"} className={classes.typographyCardId}>
+                    <Typography component={'span'} key={"typographyPokemonID"} variant="h4">
                         {id}
                     </Typography>
                 </CardContent>
                 <CardMedia
+                    key={"pokemonAvatar"}
                     className={classes.cardMedia}
                     image={sprite}
                     style={{ height: "200px", width: "200px" }}>
                 </CardMedia>
-                <CardContent className={classes.typographyCardName}>
+                <CardContent key={"pokemonCardContentBottom"} className={classes.typographyCardName}>
 
-                    <Typography variant="h5" style={{fontWeight: 900, fontSize: "28px"}}>
+                    <Typography component={'span'} key={"typographyPokemonName"} variant="h5" style={{fontWeight: 900, fontSize: "28px"}}>
                         {name && toUpperCase(name)}
                     </Typography>
 
