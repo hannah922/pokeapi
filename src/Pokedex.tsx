@@ -120,6 +120,9 @@ const Pokedex: FunctionComponent<componentPropsPokedex> = ({ match }) => {
                                     if(Number(textFieldInput) > Number(pokemonCount!)) {
                                         textFieldInput = pokemonCount!;
                                     };
+                                    if (Number(textFieldInput) < 1) {
+                                        textFieldInput = "1";
+                                    };
                                     history.replace(`${match.params.pageId}?${textFieldInput}`);
                                     setPokemonLimit(Number(textFieldInput));
                                    
@@ -159,6 +162,9 @@ const Pokedex: FunctionComponent<componentPropsPokedex> = ({ match }) => {
                                 if (params.key === "Enter") {
                                     if(Number(textFieldInput) > Number(pokemonCount!)) {
                                         textFieldInput = pokemonCount!;
+                                    };
+                                    if (Number(textFieldInput) < 1) {
+                                        textFieldInput = "1";
                                     };
                                     history.replace(`${match.params.pageId}?${textFieldInput}`);
                                     setPokemonLimit(Number(textFieldInput));
