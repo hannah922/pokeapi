@@ -3,7 +3,7 @@ import React from 'react';
 
 
 const Styles = makeStyles({
-    root: {
+    grid: {
         paddingTop: "20px",
         paddingLeft: "50px",
         paddingRight: "50px",

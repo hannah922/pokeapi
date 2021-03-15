@@ -1,21 +1,27 @@
-import React from 'react';
-import Pokedex from './Pokedex'
-import Pokemon from './Pokemon'
-import {Route, Switch, Redirect} from 'react-router-dom';
+import React from "react";
+import Pokedex from "./Pokedex";
+import Pokemon from "./Pokemon";
+import { Route, Switch, Redirect, BrowserRouter } from "react-router-dom";
 
-
-const App = (): React.ReactElement =>  {
+const App = (): React.ReactElement => {
   return (
-    <Switch>
-      <Route exact path="/">
-    <Redirect to="/1?54" />
-</Route>
-      <Route exact path="/:pageId" render={(props) => <Pokedex {...props} />}  />
-    <Route
-      path="/:pageId/:pokemonId" render={(props) => <Pokemon {...props} />}
-    />
-    </Switch>
+    <BrowserRouter>
+      <Switch>
+        <Route exact path="/">
+          <Redirect to="/1?54" />
+        </Route>
+        <Route
+          exact
+          path="/:pageId"
+          render={(props) => <Pokedex {...props} />}
+        />
+        <Route
+          path="/:pageId/:pokemonId"
+          render={(props) => <Pokemon {...props} />}
+        />
+      </Switch>
+    </BrowserRouter>
   );
-}
+};
 
 export default App;

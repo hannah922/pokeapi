@@ -4,19 +4,33 @@ import { useHistory } from "react-router-dom";
 import { PokeCardProps } from './interfaces';
 import Styles  from './styles';
 
-
 const toUpperCase = (name: string) => {
     return name.charAt(0).toUpperCase() + name.slice(1);
 
 };
+
+
+
+function onEnterBorderChange(e: React.MouseEvent<HTMLDivElement, MouseEvent>) {
+    e.currentTarget.style.borderStyle = "double";
+  }
+
+  function onLeaveBorderChange(e: React.MouseEvent<HTMLDivElement, MouseEvent>) {
+    e.currentTarget.style.borderStyle = "solid";
+  }
+
+
 //component used to display contents of the simple pokecards: ID, name, picture
 //clicking on a card opens a new page containing their detailed description
 const PokeCard = ({ id, name, sprite, pokedexPageId, pokemonLimit}: PokeCardProps) => {
     const history = useHistory();
     const classes = Styles();
     return (
-        <Grid key={"pokemonGrid"} container spacing={0} item xs={12} sm={2}>
-            <Card key={"pokemonCard"} onClick={() => history.push(
+        <Grid key={"pokemonGrid"} item xs={"auto"} sm={"auto"}>
+            <Card key={"pokemonCard"}
+             onMouseLeave={onLeaveBorderChange}
+             onMouseEnter={onEnterBorderChange} 
+             onClick={() => history.push(
                 {
                     pathname: `/${pokedexPageId}/${id}`,
                     search: `?${pokemonLimit}`

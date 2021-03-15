@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Typography, Avatar, Paper, Container, } from '@material-ui/core';
+import { Typography, Avatar, Paper, Container, createMuiTheme, } from '@material-ui/core';
 import { useHistory } from "react-router-dom";
 import { DataGrid, GridColDef, GridRowsProp } from '@material-ui/data-grid';
 import axios from 'axios';
@@ -96,7 +96,7 @@ const PokeCardDetailed = ({ id, name, abilities, sprite, types, stats, evolution
                 const rowData = params.row.name;
                 return (
                     <div>
-                        <Typography align={'right'} className={classes.typographyDefEvolution} style={{ fontWeight: 800 }}>{rowData[0]}:</Typography>
+                        <Typography align={'right'} className={classes.typographyDefEvolution} style={{ fontStyle: "italic", fontWeight: 800, textDecoration: "underline" }}>{rowData[0]}:</Typography>
                         {(rowData[2] != undefined) && <Avatar style={{ width: "80px", height: "80px", paddingLeft: "20px" }} src={rowData[2]}></Avatar>}
                     </div>
                 )
@@ -192,7 +192,7 @@ const PokeCardDetailed = ({ id, name, abilities, sprite, types, stats, evolution
                 const rowData = params.row.name;
                 return (
                     <div>
-                        <Typography align={'right'} className={classes.typographyDefEvolution} style={{ fontWeight: 800 }}>{rowData[0]}:</Typography>
+                        <Typography align={'right'} className={classes.typographyDefEvolution} style={{ fontStyle: "italic", fontWeight: 800, textDecoration: "underline" }}>{rowData[0]}:</Typography>
                         <Avatar style={{ width: "80px", height: "80px", paddingLeft: "20px" }} src={rowData[1]}></Avatar>
                     </div>
                 )
@@ -420,6 +420,7 @@ const PokeCardDetailed = ({ id, name, abilities, sprite, types, stats, evolution
                 ></DataGrid>
                 <Typography className={classes.typographySections} style={{ fontWeight: 700, }}>Evolutions: </Typography>
                 <DataGrid
+                
                     onRowClick={(params) => {
                         history.push(
                             {
@@ -455,6 +456,9 @@ const PokeCardDetailed = ({ id, name, abilities, sprite, types, stats, evolution
                             window.location.reload();
                         } else { };
                     }}
+                    // onRowHover={e => {
+                    //         e.element!.style.backgroundColor = "grey";
+                    // }}
                     className={classes.datagrid}
                     disableColumnSelector={true}
                     disableColumnMenu={true}

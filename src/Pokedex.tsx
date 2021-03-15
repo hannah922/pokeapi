@@ -139,7 +139,7 @@ const Pokedex: FunctionComponent<componentPropsPokedex> = ({ match }) => {
             </AppBar>
             {
                 newPokemonData ? (
-                    <Grid key={"key"} container spacing={2} className={classes.root}>
+                    <Grid key={"displayGrid"} container spacing={5} alignContent={"center"} justify={"space-evenly"} style={{flexGrow: 1, flexWrap: "wrap"}} className={classes.grid}>
                         {newPokemonData.map((pokemon, index) => (
                             <PokeCard key={index} id={pokemon.id} name={pokemon.name} sprite={pokemon.sprite} pokedexPageId={match.params.pageId}
                             pokemonLimit={`${pokemonLimit}`} />
